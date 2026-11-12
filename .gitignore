@@ -3,9 +3,18 @@
 .env.*
 !.env.example
 
+# Dependencies and build output
+node_modules/
+dist/
+test-results/
+playwright-report/
+
 # Personal Claude Code files
 CLAUDE.local.md
 .claude/settings.local.json
+
+# Marker for the tests-first phase (see CLAUDE.md), never committed
+.claude/.tests-first
 
 # OS and editors
 .DS_Store
