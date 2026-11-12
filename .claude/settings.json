@@ -14,7 +14,39 @@
       "Bash(awk *.env*)",
       "Bash(source *.env*)",
       "PowerShell(Get-Content *.env*)",
-      "PowerShell(Select-String *.env*)"
+      "PowerShell(Select-String *.env*)",
+      "Bash(npx *)",
+      "Bash(cd *)",
+      "PowerShell(npx *)",
+      "PowerShell(cd *)",
+      "PowerShell(Set-Location *)"
+    ],
+    "ask": [
+      "Bash(npm install *)",
+      "Bash(npm i *)",
+      "Bash(npm add *)",
+      "Bash(npm uninstall *)",
+      "Bash(npm update *)",
+      "PowerShell(npm install *)",
+      "PowerShell(npm i *)",
+      "PowerShell(npm add *)",
+      "PowerShell(npm uninstall *)",
+      "PowerShell(npm update *)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/stop-checks.sh\"",
+            "shell": "bash",
+            "timeout": 180,
+            "statusMessage": "Running typecheck, lint and unit tests..."
+          }
+        ]
+      }
     ]
   }
 }
