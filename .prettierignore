@@ -1,0 +1,10 @@
+dist/
+test-results/
+playwright-report/
+package-lock.json
+
+# Planning documents and Claude Code files keep their own formatting
+SPEC.md
+docs/spec/
+docs/decisions/
+.claude/
