@@ -1,4 +1,4 @@
-Status: grob (project-scope, 2026-11-12)
+Status: stack (setup-stack, 2026-11-12)
 
 # Neon Pounce – Spezifikation
 
@@ -428,3 +428,59 @@ Anforderungen an den Code, die daraus folgen:
 - **Formate, Palette und Messwerte der Assets**, aufbauend auf ComfyUI.
 - **Zielgeräte genauer:** älteste iOS- und Android-Version, die unterstützt
   wird.
+
+## 11. Aufgesetzter Stack
+
+Aufgesetzt am 2026-11-12 mit `setup-stack`. Das Grundgerüst steht damit: Etappe 1
+beginnt direkt mit dem Spiel und muss kein Projekt mehr anlegen.
+
+**Installierte Versionen** (exakt festgeschrieben in `package.json`):
+
+| Baustein | Version |
+|---|---|
+| Node.js (lokal) | 26.13.0, festgeschrieben als `26` in `.node-version` und über `engines` |
+| npm | 11.20.0 |
+| TypeScript | 6.0.3 |
+| Vite | 8.3.8 |
+| Vitest | 5.1.0 |
+| Playwright (`@playwright/test`) | 1.65.0, mit Chromium und WebKit |
+| ESLint | 10.14.0, dazu `@eslint/js` 10.0.1 |
+| typescript-eslint | 8.72.2 |
+| Prettier | 3.10.1 |
+| `@types/node` | 26.6.6 |
+
+**Befehle:** `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`,
+`npm run format`, `npm run e2e`, `npm run dev`, `npm run preview`. Die
+maßgebliche Liste steht in der `CLAUDE.md`.
+
+**Linter:** typbasierte Regeln (`strictTypeChecked`, `stylisticTypeChecked`),
+dazu Grenzen für die Komplexität: zyklomatische Komplexität 10,
+Verschachtelungstiefe 3, 60 Zeilen je Funktion, 4 Parameter, 3 verschachtelte
+Callbacks. Funktionslänge und Callback-Tiefe gelten nicht in Testdateien.
+
+**Stop-Hook:** `.claude/hooks/stop-checks.sh` läuft in Git Bash, sobald Claude
+aufhören will, mit einem Zeitlimit von 180 Sekunden. Er führt Typprüfung, Linter
+und Unit-Tests aus und hindert Claude bei einem Fehler am Aufhören. Solange die
+Datei `.claude/.tests-first` existiert (Test-zuerst-Phase einer Etappe),
+überspringt er die Unit-Tests. Typprüfung und Linter laufen weiter. Build und
+Rauchtests sind nicht Teil des Hooks.
+
+**Abweichungen und Ergänzungen zur Spec:**
+
+- PixiJS 8.23 ist noch nicht installiert. Es kommt in Etappe 1 mit dem ersten
+  Code, der es benutzt. Ebenso `vite-plugin-pwa` in Etappe 4 (wie geplant).
+- `@eslint/js` und `@types/node` standen nicht in Abschnitt 6. Das erste liefert
+  das Basis-Regelset von ESLint, das zweite die Typen für Konfigurationsdateien
+  und das spätere Simulationsskript.
+- Die CI (`.github/workflows/ci.yml`) führt bei jedem Push Linter, Typprüfung,
+  Vitest, Build und die Rauchtests aus. Das Deployment nach GitHub Pages fehlt
+  noch und kommt in Etappe 1, damit keine leere Seite unter dem Link steht.
+- Die `LICENSE` (MIT, Copyright WebCodingCat, Assets ausgenommen) liegt schon im
+  Repo. `README.md` und `docs/DEVELOPMENT.md` entstehen in Etappe 1.
+- Das Skript für README-Bilder entsteht in Etappe 3: `npm run screenshots` als
+  eigener Playwright-Lauf mit festen Startwerten des Zufallsgenerators, der nach
+  `docs/images/` schreibt, ohne neue Abhängigkeit und außerhalb des Stop-Hooks.
+- `npm audit` meldet 10 Befunde mittlerer Schwere, alle über `minimatch` in
+  ESLint und typescript-eslint (Entwicklungswerkzeuge, nicht im ausgelieferten
+  Spiel). Eine Korrektur gäbe es nur durch den Rückschritt auf ESLint 9. Das
+  wird hingenommen, bis die Pakete nachziehen.
