@@ -85,8 +85,12 @@ test('Game Over appears after the last life, and "Again" starts a new game', asy
   // "Export" exists only in the dev server (A107).
   await expect(page.getByTestId('export')).toHaveCount(0);
 
-  await advance(page, GAME_OVER_LOCK_MS);
+  // "Again" does not react right after Game Over appeared (A82).
   const again = againButton(fieldOf(page));
+  await page.mouse.click(again.x + again.width / 2, again.y + again.height / 2);
+  expect(await page.evaluate(() => window.__neonPounce?.screen)).toBe('gameOver');
+
+  await advance(page, GAME_OVER_LOCK_MS);
   await page.mouse.click(again.x + again.width / 2, again.y + again.height / 2);
   expect(await page.evaluate(() => window.__neonPounce?.screen)).toBe('game');
   expect(await page.evaluate(() => window.__neonPounce?.lives)).toBe(START_LIVES);

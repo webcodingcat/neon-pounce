@@ -229,6 +229,20 @@ describe('timer (A19, A21, A24)', () => {
   });
 });
 
+describe('penalties of the configuration (A20)', () => {
+  it('rise from miss to miss', () => {
+    expect(MISS_PENALTIES_MS.length).toBeGreaterThan(1);
+    MISS_PENALTIES_MS.slice(1).forEach((penalty, index) => {
+      expect(penalty).toBeGreaterThan(MISS_PENALTIES_MS[index] ?? Infinity);
+    });
+  });
+
+  it('add up to more than the longest timer, so trying every ring never pays', () => {
+    const sum = MISS_PENALTIES_MS.reduce((total, penalty) => total + penalty, 0);
+    expect(sum).toBeGreaterThan(TIMER_MS);
+  });
+});
+
 describe('penalty for a miss (A13, A20, A21, A24)', () => {
   it('takes more time with every miss on the same segment, the last value from then on', () => {
     const table = tableWithTakenSlot(FAR_MS);
