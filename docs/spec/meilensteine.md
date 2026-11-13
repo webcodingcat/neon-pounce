@@ -46,7 +46,7 @@ entschieden (SPEC.md, Abschnitt 6.2), und die folgenden Meilensteine warten.
 
 ## Meilenstein 2: Legen, Leeren, Abwerfen
 
-**Status:** offen
+**Status:** erledigt am 2026-11-13 (Commit 0405fc2)
 
 **Ziel:** Das Feld lässt sich mit dem Finger bespielen: legen, Ringe leeren,
 abwerfen, noch ohne Zeitdruck.
@@ -71,24 +71,24 @@ und eine Partie lässt sich am Handy beliebig lang spielen.
 - Die Leistungsprobe bleibt über den Schalter in der Konfiguration erreichbar.
 
 **Abnahme-Checkliste:**
-- [ ] App öffnen: In der Mitte liegt ein Segment mit Farbe und Symbol an einer
+- [x] App öffnen: In der Mitte liegt ein Segment mit Farbe und Symbol an einer
       der sechs Positionen.
-- [ ] Einen Ring antippen: Das Segment liegt sofort an derselben Position in
+- [x] Einen Ring antippen: Das Segment liegt sofort an derselben Position in
       diesem Ring, ein neues erscheint in der Mitte.
-- [ ] Einen Ring antippen, dessen Platz an dieser Position belegt ist: Der Ring
+- [x] Einen Ring antippen, dessen Platz an dieser Position belegt ist: Der Ring
       wackelt, das Segment bleibt in der Mitte.
-- [ ] Zwanzig Segmente zügig legen: Jeder Tipp landet im gemeinten Ring, kein
+- [x] Zwanzig Segmente zügig legen: Jeder Tipp landet im gemeinten Ring, kein
       Tipp wird verschluckt oder dem Nachbarring zugeschlagen.
-- [ ] Mit zwei Daumen abwechselnd tippen: Beide Tipps zählen.
-- [ ] Einen Ring füllen: Er leert sich sofort und blinkt weiß, die Punkte
+- [x] Mit zwei Daumen abwechselnd tippen: Beide Tipps zählen.
+- [x] Einen Ring füllen: Er leert sich sofort und blinkt weiß, die Punkte
       steigen um 110.
-- [ ] Einen Ring einfarbig füllen: Er blinkt in seiner Farbe, die Punkte steigen
+- [x] Einen Ring einfarbig füllen: Er blinkt in seiner Farbe, die Punkte steigen
       um 310, die Abwürfe um 1.
-- [ ] Aus der Mitte wischen: Das Segment verschwindet, die Abwürfe sinken um 1,
+- [x] Aus der Mitte wischen: Das Segment verschwindet, die Abwürfe sinken um 1,
       ein neues Segment erscheint.
-- [ ] Auf einem Ring ansetzen und wischen: Es zählt als Tipp auf diesen Ring,
+- [x] Auf einem Ring ansetzen und wischen: Es zählt als Tipp auf diesen Ring,
       nicht als Abwurf.
-- [ ] Position, Farbe und Symbol des Segments aus Armlänge ansehen: Alle drei
+- [x] Position, Farbe und Symbol des Segments aus Armlänge ansehen: Alle drei
       sind auf einen Blick erkennbar.
 
 ## Meilenstein 3: Zeitdruck und Game Over
