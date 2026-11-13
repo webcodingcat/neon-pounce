@@ -175,8 +175,10 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
 - **A52** Bonus-Segmente erscheinen nicht von selbst und kommen aus demselben
   Generator wie die normalen Segmente (Mischung aus Beutel und Chance, A32).
   Ereignisse erhöhen die Chance, dass das nächste Segment ein Bonus ist.
-  Erscheint ein Bonus, fällt die Chance auf ihren Grundwert. Ein Bonus-Segment
-  verbraucht keine Position aus dem Beutel, weil es keine hat. Vorläufige
+  Erscheint ein Bonus, fällt die Chance auf ihren Grundwert. Der Generator
+  behandelt ein Bonus-Segment wie ein normales Segment: Es entsteht aus einer
+  normalen Ziehung und verbraucht deren Position aus dem Beutel, auch wenn der
+  Joker diese Position nicht nutzt. Vorläufige
   Startwerte: Grundwert 0 %, einfarbiger Ring +10 Prozentpunkte, Leerung mit
   Combo ab 3 +5 Prozentpunkte, Obergrenze 30 %. Welche Ereignisse welche
   Bonus-Art auslösen und wie Beutel und Chance dabei zusammenwirken, wird je
