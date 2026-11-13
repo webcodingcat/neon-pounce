@@ -1,4 +1,4 @@
-Status: stack (setup-stack, 2026-11-12)
+Status: fein (project-details, 2026-11-13)
 
 # Neon Pounce – Spezifikation
 
@@ -15,9 +15,10 @@ Synthwave-Klang. In der Mitte leuchtet ein Segment mit fester Position und
 zufälliger Farbe auf. Der Spieler tippt es unter Zeitdruck in einen von sechs
 Ringen, um Ringe zu füllen und möglichst einfarbig abzuräumen.
 
-**Kernmechanik in Kurzform.** Die vollständigen Regeln stehen im Spielkonzept
-unter `docs/spec/spielkonzept.md`. Wo diese Datei „Konzept“ sagt, ist es
-gemeint.
+**Kernmechanik in Kurzform.** Die maßgeblichen Regeln stehen als nummerierte
+Anforderungen in `docs/spec/anforderungen.md`, die Begründungen im Spielkonzept
+unter `docs/spec/spielkonzept.md`. Wo diese Datei „Konzept“ sagt, ist das
+Spielkonzept gemeint. Alle Teilspecs nennt Abschnitt 9.
 
 - Sechs äußere Ringe mit je sechs Plätzen, um 30° gegen die Platz-Positionen
   versetzt. Die Position des Segments steht fest, der Spieler wählt nur den Ring.
@@ -60,7 +61,8 @@ Das Projekt entsteht nebenbei, in fünf Etappen und ohne festen Termin.
   verschwindet aber nicht. Messwert: Einfarbig-Quote je Stufe.
 - Der Abwurf-Vorrat ist weder dauernd leer noch dauernd voll, gemessen je Stufe.
 - Ein einzelner Glücksfall entscheidet keine Partie. Messwert: Streuung der
-  Endpunktzahl je Strategie (die Multiplikatoren stapeln sich bis ×67,5).
+  Endpunktzahl je Strategie (die Multiplikatoren stapeln sich bis ×67,5, beim
+  Ring nur aus Jokern bis ×225).
 - Neue Spieler verstehen mit einem Satz Erklärung, dass die Position feststeht
   und sie nur den Ring wählen.
 - Das Spiel läuft auf iPhone und Android-Handy flüssig mit 60 Bildern pro
@@ -85,9 +87,9 @@ Es gibt kein Lernziel, das den Stack oder den Umfang beeinflusst.
 - Kein Text im laufenden Spiel, nur Zahlen und Symbole. Die Oberfläche ist
   Englisch.
 - Lokaler Highscore. Eine laufende Partie wird nicht gespeichert.
-- Grafiken, Soundeffekte und Musik entstehen lokal über ComfyUI und liegen dem
-  Spiel als Dateien bei. Einfache Effekte und Grafiken dürfen auch per Code
-  entstehen.
+- Hintergrund und Musik entstehen lokal über ComfyUI und liegen dem Spiel als
+  Dateien bei. Spielgrafik und Soundeffekte entstehen per Code (siehe Abschnitt
+  6.6).
 - Effekte und Musik gehören zum ersten Umfang.
 
 ## 5. Nicht-Ziele
@@ -284,96 +286,112 @@ bereits veröffentlichte Stände zurückzunehmen nicht.
 
 ### 6.6 Assets
 
-Grafiken, Soundeffekte und Musik kommen aus ComfyUI auf dem eigenen Rechner und
-liegen dem Spiel als Dateien bei. Einfache Effekte und Grafiken dürfen per Code
-entstehen. Modelle, Workflows und Installation klärt `/wcc:asset-setup`. Die
-Modelldateien kommen nicht ins Repo. Workflows, die ins Repo kommen, enthalten
-keine lokalen Pfade mit Benutzernamen.
+- **Aus ComfyUI auf dem eigenen Rechner:** das Hintergrundbild und das
+  Musikstück. Sie liegen dem Spiel als Dateien bei.
+- **Per Code:** Ringe, Segmente, Symbole, Glow, Partikel und alle Soundeffekte.
+- **Freie Schrift** (SIL Open Font License) als Datei im Repo, ausgewählt in
+  Meilenstein 9.
+
+**Begründung:** Spielgrafik muss geometrisch exakt zu den 60°-Keilen passen und
+einmal als Glow-Textur gebaut werden (Abschnitt 6.2), das leistet ein Bildmodell
+nicht zuverlässig. Die Effekte brauchen steuerbare Tonhöhen (Füllstand,
+Halbtöne je Combo). Ein gemalter Hintergrund und ein Musikstück sind dagegen
+genau das, was ein Modell gut kann und Code nicht. Die Schrift liegt bei, weil
+das Spiel offline laufen und nichts von fremden Servern abrufen soll.
+
+**Kosten einer späteren Änderung:** gering. Das Spiel ruft nur „Effekt mit
+Tonhöhe“ auf. Ein einzelner Effekt lässt sich später durch eine Datei aus
+ComfyUI ersetzen, ohne das Spiel umzubauen. Dieser Vergleich ist für die Effekte
+ohne feste Tonhöhe in Meilenstein 11 vorgesehen.
+
+Modelle, Workflows und Installation klärt `/wcc:asset-setup` (Meilenstein 4).
+Die Modelldateien kommen nicht ins Repo. Workflows, die ins Repo kommen,
+enthalten keine lokalen Pfade mit Benutzernamen. Stilvorgaben, Formate und
+Messwerte stehen in `docs/spec/grafik-audio.md`.
+
+### 6.7 Zielsysteme
+
+**Entscheidung:** Safari auf der aktuellen und der vorigen iOS-Hauptversion,
+aktuelles Chrome auf Android 12 oder neuer.
+
+**Begründung:** Das deckt die Handys im Freundeskreis ab, ohne Altlasten zu
+pflegen. Getestet wird nur auf den eigenen Geräten.
+
+**Kosten einer späteren Änderung:** gering, solange keine Browser-Funktion
+genutzt wird, die es nur in der neuesten Version gibt.
 
 ## 7. Offene Annahmen
 
+Die Meilensteine stehen in `docs/spec/meilensteine.md`.
+
 **PixiJS hält 60 Bilder pro Sekunde auf echten Handys.**
 - Vorläufiger Standard: PixiJS 8.23 bleibt.
-- Geklärt in: Etappe 1, Leistungsprobe. Prüffrage: Hält ein volles Feld mit 36
-  leuchtenden Segmenten und Partikeln fünf Minuten am Stück stabile 60 Bilder
-  pro Sekunde auf dem iPhone 17 und dem Android-Handy? Wenn nicht, wird der
-  Renderer neu entschieden, bevor Look und Sound darauf aufbauen.
+- Geklärt in: Meilenstein 1, Leistungsprobe. Scheitert sie, wird der Renderer
+  neu entschieden, bevor Look und Sound darauf aufbauen.
 
 **Neue Spieler verstehen mit einem Satz, dass die Position feststeht.**
 - Vorläufiger Standard: Das Konzept bleibt.
-- Geklärt in: Etappe 1, Kurztest mit ein oder zwei Freunden in zwei
+- Geklärt in: Meilenstein 3, Kurztest mit ein oder zwei Freunden in zwei
   Durchgängen.
-  - Erster Durchgang, etwa fünf Minuten mit der festen Einstellung aus dem
-    Konzept (etwa 3 Farben, 4 s, jede Position zweimal im Beutel). Prüffrage:
-    Verstehen sie nach einem Satz Erklärung, dass sie nur den Ring wählen?
-  - Zweiter Durchgang mit harter Einstellung über die Entwickler-Regler (etwa
-    5 Farben, 2,5 s), damit die Partie sicher im Game Over endet. Prüffrage:
-    Drücken sie „Again“ ohne Aufforderung? Mit der leichten Einstellung verliert
-    in fünf Minuten kaum jemand drei Leben, die Frage bliebe sonst
-    unbeantwortet.
+  - Erster Durchgang, etwa fünf Minuten mit 3 Farben, 4 s und jeder Position
+    zweimal im Beutel. Prüffrage: Verstehen sie nach einem Satz Erklärung, dass
+    sie nur den Ring wählen?
+  - Zweiter Durchgang mit harter Einstellung in der Konfigurationsdatei (5
+    Farben, 2,5 s), damit die Partie sicher im Game Over endet. Prüffrage:
+    Drücken sie „Again“ ohne Aufforderung?
 
 **Geübte erreichen im Median 150 bis 300 Züge.**
-- Vorläufiger Standard: die Startwerte aus dem Konzept.
-- Geklärt in: Etappe 2. Die Simulation liefert die Schätzung. Der Test mit
+- Vorläufiger Standard: die Startwerte aus `docs/spec/balance.md`.
+- Geklärt in: Meilenstein 7. Die Simulation liefert die Schätzung. Der Test mit
   Menschen bin ich selbst über mehrere Tage, weil im Spieltest nur Neulinge
-  sitzen. Damit die Bots nicht auf geratenen Werten rechnen, protokolliert schon
-  Etappe 1 je Segment Entscheidungszeit und Fehltipps, auch bei harter
-  Einstellung (6 Farben, 2 s). Welcher Bot mit welchen Werten „Geübte“ und
-  „Anfänger“ darstellt, legt `project-details` fest.
+  sitzen.
+
+**Die Schätzwerte der Bots treffen echte Spieler.**
+- Vorläufiger Standard: Geübte 0,8 s Entscheidungszeit und 2 % Fehlgriffe,
+  Anfänger 1,6 s und 8 %.
+- Geklärt in: Meilenstein 6, durch Abgleich mit den exportierten Protokollen
+  aus Meilenstein 3.
 
 **Der flache Anfang ermüdet nicht.** Die Stufen 1 bis 4 sind 44 Platzierungen
 fast ohne Einsatz und kommen nach jedem „Again“ erneut.
-- Vorläufiger Standard: Stufenlängen 8 / 10 / 12 / 14 wie im Konzept. Der flache
-  Anfang ist gewollt.
-- Geklärt in: Etappe 2, durch eigenes Spiel über viele Partien. Das misst weder
-  die Simulation noch ein Test mit Neulingen. Die Stufenlängen sind einstellbare
-  Werte, damit der Vergleich mit 6 / 6 / 8 / 10 ohne Umbau geht.
+- Vorläufiger Standard: Stufenlängen 8 / 10 / 12 / 14. Der flache Anfang ist
+  gewollt.
+- Geklärt in: Meilenstein 5 und 7, durch eigenes Spiel über viele Partien. Die
+  Stufenlängen sind Konstanten, damit der Vergleich mit 6 / 6 / 8 / 10 ohne
+  Umbau geht.
 
 **Spieler finden den Wisch auch ohne Tutorial.** Zwei der drei Abwägungen
 hängen am Abwurf.
 - Vorläufiger Standard: Es bleibt bei der Entscheidung, im laufenden Spiel
   keinen Wisch-Hinweis zu geben.
-- Geklärt in: Etappe 4, bei der Abnahme. Prüffrage: Entdeckt eine Person, die
-  das Tutorial überspringt, den Wisch von selbst? Erst wenn nicht, wird die
+- Geklärt in: Meilenstein 15, bei der Abnahme. Prüffrage: Entdeckt eine Person,
+  die das Tutorial überspringt, den Wisch von selbst? Erst wenn nicht, wird die
   Entscheidung neu aufgerollt.
 
-**ComfyUI liefert lokal brauchbare Grafik, Effekte und Musik.**
+**ComfyUI liefert lokal einen brauchbaren Hintergrund und brauchbare Musik.**
 - Vorläufiger Standard: ComfyUI bleibt.
-- Geklärt in: Etappe 1, je ein Probe-Asset für Grafik, Effekt und Musik. Die
-  Modelle wählt `/wcc:asset-setup`.
+- Geklärt in: Meilenstein 4, je eine Probe für Hintergrund, Effekt und Musik.
 
 **Lizenz der Assets.**
 - Vorläufiger Standard: von der MIT-Lizenz ausgenommen, alle Rechte vorbehalten.
-- Geklärt in: `/wcc:asset-setup`, sobald die Modelle und ihre Lizenzen
-  feststehen.
+- Geklärt in: Meilenstein 4, sobald die Modelle und ihre Lizenzen feststehen.
 
-**Spielwerte und Varianten.** Die vollständige Liste steht im Konzept,
-Abschnitt 12 und 14.
-- Vorläufiger Standard: die Startwerte aus dem Konzept.
-- Geklärt in `project-details` (Regeln und Rückmeldungen):
-  - Aufräumer: Ab wie vielen Segmenten zählt sein Einfarbig-Bonus? Wie sieht
-    seine Rückmeldung aus?
-  - Bis zu welcher Stufe leuchten die belegten Plätze nach einem
-    Blockade-Timeout auf?
-  - Fehlende Rückmeldungen: Einfarbig bei vollem Vorrat, Klang beim
-    Combo-Abbruch.
-- Geklärt in Etappe 2 (Simulation und Spieltest):
-  - Bonus-Segmente: Welche Ereignisse erhöhen ihre Chance, und um wie viel?
-  - Positionsgenerator: Verhältnis von Beutel und Gewichtung, Form des gnädigen
-    Anfangs.
-  - Timer auf Stufe 12: 2,0 s oder 2,5 s.
-  - Timer nach Stufe 12: Wie schnell sinkt er auf sein absolutes Minimum, und
-    liegt das bei 1,8 s? Das ist eine andere Frage als der Timer auf Stufe 12.
-  - Wie viele Platzierungen dauert eine Stufe nach Stufe 12?
-  - Variante: Auf einer Stufe mit neuer Farbe wird der Timer nicht verkürzt.
-  - Variante: kürzere erste Stufen (6 / 6 / 8 / 10).
-  - Staffel der Strafzeiten: 0,5 / 1 / 2 / 4 s gegen flachere und steilere.
-  - Abwurf-Vorrat: ein Abwurf je Stufenaufstieg, oder Punkte statt Abwurf bei
-    Einfarbig mit vollem Vorrat.
-  - Prüfpunkt: Dominiert der Combo-Jäger, weil Abwürfe nicht für den
-    Stufenaufstieg zählen?
-  - Prüfpunkt: Wie lang werden die Partien des besten Bots nach Stufe 12? Bei
-    einem langen flachen Ende käme ein wachsender Beutel in Frage.
+**Spielwerte und Varianten.** Die Liste der offenen Stellschrauben steht in
+`docs/spec/balance.md`, Abschnitt 5.
+- Vorläufiger Standard: die Startwerte dort.
+- Geklärt in: Meilenstein 7 (Generator, Timer, Stufen, Strafzeiten, Vorrat) und
+  Meilenstein 8 (Bonus-Auslöser).
+
+**Grenzwerte für Bild und Ton.** Kontraste, Farbabstände, Größen und Pegel in
+`docs/spec/grafik-audio.md` sind Startwerte.
+- Vorläufiger Standard: die Werte dort.
+- Geklärt in: Meilenstein 9 (Bild) und Meilenstein 11 (Ton).
+
+**Darstellung und Rückmeldung des Aufräumers** (A62).
+- Vorläufiger Standard: weißes Segment mit Wirbel-Symbol. Die Segmente des
+  Rings fliegen spiralförmig hinaus. Der Klang ist das Leeren-Arpeggio
+  rückwärts.
+- Geklärt in: vor Beginn von Meilenstein 16, im Gespräch.
 
 ## 8. Secrets
 
@@ -390,44 +408,45 @@ Grundlagen (`.gitignore`, `.claude/settings.json`, `.claude/rules/secrets.md`)
 bleiben bestehen. Kommt später doch ein Secret dazu, wird dieser Abschnitt
 ergänzt.
 
-## 9. Teststrategie (grob)
+## 9. Teilspecs
 
-| Ebene | Werkzeug | Was geprüft wird |
-|---|---|---|
-| Regelkern | Vitest 5.1 | Alle Spielregeln als reine Funktionen: Platzieren, Fehltipp, Leeren, Einfarbig, Combo, Strafzeiten, Stufen, Generator. Ohne Browser. |
-| Simulation | eigenes Skript unter Node | Bots spielen tausende Partien und liefern die Messwerte zur Abstimmung. Das ist ein Abstimmwerkzeug. In der CI prüft nur ein kurzer Lauf, dass es funktioniert. |
-| Oberfläche | Playwright 1.65 | Wenige Rauchtests mit emuliertem Handy-Bildschirm in Chromium und WebKit: Die App lädt, ein Tipp legt ein Segment, Game Over erscheint. Ab Etappe 4 auch der Start ohne Netz. |
-| Von Hand | eigene Geräte, Freunde | Spielgefühl, Lesbarkeit, Ton, Leistungsprobe, Installation auf dem Startbildschirm, Kurztest und Spieltest. |
+Die Einzelheiten stehen unter `docs/spec/`. Diese Datei bleibt die Übersicht.
 
-Anforderungen an den Code, die daraus folgen:
+| Datei | Inhalt |
+|---|---|
+| `anforderungen.md` | Nummerierte Anforderungen A1 bis A118 mit Randfällen, Ablauf-Tabelle und Speicherformat. Maßgeblich, wo sie vom Spielkonzept abweicht. |
+| `teststrategie.md` | Was automatisch und was von Hand geprüft wird, kontrollierbarer Zufall und Zeit, Testhilfen, Liste der Konstanten |
+| `meilensteine.md` | 16 Meilensteine mit Status, Ziel, Anforderungen, Abschlusskriterium, Übergangsverhalten und Abnahme-Checkliste |
+| `balance.md` | System „Balance“: Startwerte, Prüfliste, offene Stellschrauben. Reviewer: `balance-reviewer` |
+| `grafik-audio.md` | System „Grafik und Audio“: Stilvorgaben, Herkunft der Assets, Messwerte, Prüfliste. Reviewer: `grafik-audio-reviewer` |
+| `spielkonzept.md` | Ursprungsdokument mit den Begründungen der Spielregeln |
+
+Anforderungen an den Code, die aus der Teststrategie folgen:
 
 - Der Zufallsgenerator wird dem Regelkern übergeben (siehe Abschnitt 4).
 - Die Zeit wird dem Regelkern übergeben, er liest keine Uhr.
 - Im Testmodus legt die App den Spielstand lesbar offen, weil Playwright in
   einer Zeichenfläche keine einzelnen Elemente sieht.
 
-## 10. Noch offen für das feine Interview
+## 10. Definition of Done
 
-- **Anforderungen im Detail.** Quelle ist das Spielkonzept unter
-  `docs/spec/spielkonzept.md` (Spielfeld, Kern-Schleife, Regeln, Rückmeldungen,
-  Look und Sound, Bildschirme, Abstimmung der Spielwerte).
-- **Meilensteine mit Abschlusskriterien.** Ausgangspunkt sind die fünf Etappen
-  aus dem Konzept, Abschnitt 15:
-  1. Kleinste spielbare Version auf einem echten Handy, mit Leistungsprobe,
-     Probe-Assets und Kurztest in zwei Durchgängen. Dazu gehören
-     Entwickler-Regler für Timer, Farbzahl, Strafzeiten und Beutelgröße (damit
-     sich auch 6 Farben bei 2 s ausprobieren lassen) und ein Protokoll von
-     Entscheidungszeit und Fehltipps je Segment.
-  2. Regelkern und Simulation: Stufen, Punkte, Combo, Positionsgenerator,
-     Bonus-System mit Joker, Bot-Simulation, Spieltest
-  3. Look, Game Feel, Sound und Musik
-  4. Bildschirme: Start, How to play, Tutorial, Pause, Game Over, Highscore,
-     Installation als PWA
-  5. Aufräumer als zweiter Bonus
-- **Definition of Done.**
-- **Formate, Palette und Messwerte der Assets**, aufbauend auf ComfyUI.
-- **Zielgeräte genauer:** älteste iOS- und Android-Version, die unterstützt
-  wird.
+Ein Meilenstein ist fertig, wenn:
+
+1. Unit-Tests, Linter, Typprüfung, Build und Rauchtests grün sind,
+2. der `code-reviewer` den Code geprüft hat, dazu der `docs-reviewer`, wenn sich
+   Dokumentation geändert hat, und der `balance-reviewer` oder der
+   `grafik-audio-reviewer`, wenn der Meilenstein ihr System berührt,
+3. `README.md` und `docs/DEVELOPMENT.md` zum Stand passen,
+4. ich die Abnahme-Checkliste des Meilensteins abgenommen habe, bei zweistufiger
+   Abnahme die Stufe 1,
+5. alles committet und der Branch mit `--ff-only` in `main` zusammengeführt ist.
+
+Bei zweistufiger Abnahme (Meilenstein 3 und 15) folgt Stufe 2 nach Merge und
+Push. Der Status des Meilensteins wird erst danach auf „erledigt“ gesetzt.
+
+Der Ablauf je Meilenstein (Branch, Tests zuerst, Plan, Umsetzung, Reviews,
+Abnahme) steht in der `CLAUDE.md` unter „Workflow per milestone“ und wird hier
+nicht wiederholt.
 
 ## 11. Aufgesetzter Stack
 
