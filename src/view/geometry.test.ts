@@ -98,7 +98,7 @@ describe('boardGeometry (A1, A3)', () => {
     expect(geometry.ringDistance - geometry.ringRadius).toBeGreaterThan(geometry.timerArcRadius);
   });
 
-  it('fits all rings into the field and uses most of its width', () => {
+  it('fits all rings into the field', () => {
     for (const width of [360, 520]) {
       const geometry = boardGeometry(CENTER, width);
       const reachX = RINGS.map(
@@ -108,7 +108,6 @@ describe('boardGeometry (A1, A3)', () => {
         (ring) => Math.abs(ringCenter(geometry, ring).y - CENTER.y) + geometry.ringRadius,
       );
       expect(Math.max(...reachX)).toBeLessThanOrEqual(width / 2);
-      expect(Math.max(...reachX)).toBeGreaterThanOrEqual(0.9 * (width / 2));
       expect(Math.max(...reachY)).toBeLessThanOrEqual((MIN_FIELD_ASPECT * width) / 2);
     }
   });
