@@ -12,7 +12,10 @@ Look und Klang, 12 bis 15 Bildschirme, 16 Aufräumer.
 
 ## Meilenstein 1: Leistungsprobe
 
-**Status:** offen
+**Status:** gemergt am 2026-11-13 (Commit 76adf60), Abnahme auf Android-Handy
+und iPad steht aus
+
+**Messwerte:** iPhone 17 nach fünf Minuten: Mittel 60, schlechteste Sekunde 59.
 
 **Ziel:** Beweisen, dass PixiJS ein volles, leuchtendes Feld auf echten Handys
 mit 60 Bildern pro Sekunde zeichnet, bevor irgendetwas darauf aufbaut.
@@ -30,10 +33,10 @@ entschieden (SPEC.md, Abschnitt 6.2), und die folgenden Meilensteine warten.
 - Die Segmente sind Platzhalter mit Glow, ohne endgültige Farben und Symbole.
 
 **Abnahme-Checkliste:**
-- [ ] App auf dem iPhone 17 öffnen: Sechs Ringe stehen bei 12, 2, 4, 6, 8 und
+- [x] App auf dem iPhone 17 öffnen: Sechs Ringe stehen bei 12, 2, 4, 6, 8 und
       10 Uhr um die Mitte, jeder ist mit sechs leuchtenden Kuchenstücken
       gefüllt, Partikel strömen.
-- [ ] iPhone 17 fünf Minuten laufen lassen: Die Anzeige zeigt danach ein Mittel
+- [x] iPhone 17 fünf Minuten laufen lassen: Die Anzeige zeigt danach ein Mittel
       von mindestens 58 und eine schlechteste Sekunde von mindestens 50.
 - [ ] Dasselbe auf dem Android-Handy: gleiche Grenzwerte.
 - [ ] Auf beiden Geräten nach fünf Minuten hinsehen: kein sichtbares Ruckeln,
