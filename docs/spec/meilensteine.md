@@ -334,11 +334,14 @@ Palette, Symbole, Schrift, Fugenbreite und Proportionen stehen danach in
 `grafik-audio.md`.
 
 **Hinweis aus dem Review von Meilenstein 1:** Der Glow der Platzhalter-Keile
-(Radius 0,012 der Feldbreite) füllt die Fugen (0,008) etwa zur Hälfte, sie sind
-grau statt dunkel. In einem einfarbigen Ring ist die Fuge die einzige Trennung
-(A2). Beim Festlegen der Fugenbreite prüfen, ob `grafik-audio.md` einen
-Grenzwert braucht (Mindestbreite bei 360 CSS-Pixeln, frei von Glow) und ob der
-Glow nur am Außenrand des Rings liegen soll.
+(`GLOW` in `src/view/textures.ts`, 0,012 der Feldbreite) ist breiter als die
+Fuge (`GAP_WIDTH` in `src/config.ts`, 0,008). Rechnerisch deckt er die
+Fugenmitte zu etwa 44 %, die Fugen sind grau statt dunkel. In einem Ring mit
+sechs gleichfarbigen Keilen ist die Fuge die einzige Trennung (A2). Beim
+Festlegen der Fugenbreite prüfen, ob der Glow nur am Außenrand des Rings liegen
+soll und ob `grafik-audio.md` einen Grenzwert braucht (Mindestbreite bei 360
+CSS-Pixeln, frei von Glow). Falls ja, kommt er als Zeile in Abschnitt 3 und als
+Test aus der Geometrie.
 
 **Übergangsverhalten:**
 - Animationen fehlen noch: Segmente springen an ihren Platz, Rückmeldungen
@@ -379,10 +382,11 @@ den Stufen intensiver.
 grün, der `grafik-audio-reviewer` hat neue Screenshots bewertet, und die
 Bildrate bleibt auf beiden Handys bei 60.
 
-**Hinweis aus dem Review von Meilenstein 1:** In der Leistungsprobe starten
-alle Partikel in der Mitte und sind dort am dichtesten und hellsten. Im Spiel
-dürfen Partikel die Mitte nicht verdecken (`grafik-audio.md`, Prüfliste Punkt
-2): Emitter liegen nicht in der Mitte.
+**Hinweis aus dem Review von Meilenstein 1:** In der Leistungsprobe (A108)
+starten alle Partikel in der Mitte und sind dort am dichtesten. Im Spiel dürfen
+Partikel weder die Mitte noch belegte Plätze verdecken (`grafik-audio.md`,
+Prüfliste Punkt 2), Emitter liegen deshalb nicht in der Mitte. Die
+Leistungsprobe selbst bleibt als Messwerkzeug unverändert.
 
 **Übergangsverhalten:**
 - Es gibt noch keinen Ton.
