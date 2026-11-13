@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { COLOR_COUNT, MISS_PENALTIES_MS, START_LIVES, TIMER_MS } from '../config';
+import { COLOR_COUNT, MISS_PENALTIES_MS, START_DISCARDS, START_LIVES, TIMER_MS } from '../config';
 import { advanceTime, applyInput, createGame } from '../core/game';
 import { createRng, type Rng } from '../core/rng';
 import type { GameInput, GameState, StepResult } from '../core/types';
@@ -64,7 +64,10 @@ describe('protocol of a game (A109)', () => {
         color: first.color,
         level: 1,
         timerMs: null,
+        takenRings: 0,
+        discards: START_DISCARDS,
         decisionMs: 900,
+        firstTapMs: 900,
         misses: 0,
         outcome: 'placed',
         ring: 3,
@@ -74,6 +77,7 @@ describe('protocol of a game (A109)', () => {
 
   it('records a discard, a timeout and a give-up with their decision times', () => {
     const game = new Recorded();
+    const first = game.state.current;
     game.tap(0, START_MS + 500);
     const discarded = game.state.current;
     game.swipe(START_MS + 800);
@@ -93,7 +97,11 @@ describe('protocol of a game (A109)', () => {
       color: discarded.color,
       level: 1,
       timerMs: TIMER_MS,
+      // Only the first segment lies on the board, in ring 0.
+      takenRings: discarded.position === first.position ? 1 : 0,
+      discards: START_DISCARDS,
       decisionMs: 300,
+      firstTapMs: null,
       misses: 0,
       outcome: 'discarded',
       ring: null,
@@ -135,7 +143,42 @@ describe('protocol of a game (A109)', () => {
     const [, second, third] = game.finish().segments;
     expect(second).toMatchObject({ number: 2, misses: 2, outcome: 'placed', ring: 5 });
     expect(second?.decisionMs).toBe(700);
-    expect(third).toMatchObject({ number: 3, misses: 0 });
+    // The first tap was the first miss, 300 ms after the segment appeared.
+    expect(second?.firstTapMs).toBe(300);
+    expect(third).toMatchObject({ number: 3, misses: 0, firstTapMs: 400 });
+  });
+
+  it('records the state a segment met when it appeared', () => {
+    const game = new Recorded();
+    const first = game.state.current;
+    // Rings 1 to 3 are full, and one discard is gone.
+    game.set({
+      rings: game.state.rings.map((ring, ringIndex) =>
+        ring.map((_, slot) =>
+          ringIndex >= 1 && ringIndex <= 3 ? { id: 900 + slot, position: slot, color: 0 } : null,
+        ),
+      ),
+      discards: START_DISCARDS - 1,
+    });
+    game.tap(0, START_MS + 500);
+    const second = game.state.current;
+    game.swipe(START_MS + 900);
+    const records = game.finish().segments;
+    // The first segment appeared on an empty board with the full stock.
+    expect(records[0]).toMatchObject({ takenRings: 0, discards: START_DISCARDS });
+    expect(records[1]).toMatchObject({
+      takenRings: second.position === first.position ? 4 : 3,
+      discards: START_DISCARDS - 1,
+    });
+  });
+
+  it('writes whole milliseconds even when the clock has fractions', () => {
+    const game = new Recorded();
+    game.tap(0, START_MS + 500.4);
+    game.tap(1, START_MS + 500.4 + 300.3);
+    const [first, second] = game.finish().segments;
+    expect(first).toMatchObject({ decisionMs: 500, firstTapMs: 500 });
+    expect(second).toMatchObject({ decisionMs: 300, firstTapMs: 300 });
   });
 
   it('leaves out the segment that is still in the centre', () => {

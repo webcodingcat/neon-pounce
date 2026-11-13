@@ -28,8 +28,14 @@ export interface SegmentRecord {
   readonly level: number;
   /** Full time of its timer, or null for the first segment. */
   readonly timerMs: number | null;
+  /** Number of rings whose slot at the position was taken when it appeared. 6 is a blockade. */
+  readonly takenRings: number;
+  /** Discards in stock when it appeared. */
+  readonly discards: number;
   /** Time from its appearance to its end. */
   readonly decisionMs: number;
+  /** Time from its appearance to the first tap on a ring, or null without one. */
+  readonly firstTapMs: number | null;
   readonly misses: number;
   readonly outcome: SegmentOutcome;
   /** Ring it was placed into, otherwise null. */
@@ -60,7 +66,10 @@ interface OpenSegment {
   readonly color: number;
   readonly level: number;
   readonly timerMs: number | null;
+  readonly takenRings: number;
+  readonly discards: number;
   readonly sinceMs: number;
+  readonly firstTapMs: number | null;
   readonly misses: number;
 }
 
@@ -77,8 +86,21 @@ function openSegment(state: GameState, sinceMs: number): OpenSegment {
     color: state.current.color,
     level: state.level,
     timerMs: state.timerMs,
+    takenRings: state.rings.filter((ring) => ring[state.current.position] !== null).length,
+    discards: state.discards,
     sinceMs,
+    firstTapMs: null,
     misses: 0,
+  };
+}
+
+/** Notes a tap on a ring, a placement or a miss. Only the first one sets the time. */
+function withTap(open: OpenSegment, missed: boolean, timeMs: number): OpenSegment {
+  return {
+    ...open,
+    // The clock of the browser has fractions of a millisecond.
+    firstTapMs: open.firstTapMs ?? Math.round(timeMs - open.sinceMs),
+    misses: open.misses + (missed ? 1 : 0),
   };
 }
 
@@ -108,8 +130,10 @@ function close(recorder: ProtocolRecorder, event: GameEvent, timeMs: number): Pr
     color: open.color,
     level: open.level,
     timerMs: open.timerMs,
-    // The clock of the browser has fractions of a millisecond.
+    takenRings: open.takenRings,
+    discards: open.discards,
     decisionMs: Math.round(timeMs - open.sinceMs),
+    firstTapMs: open.firstTapMs,
     misses: open.misses,
     outcome,
     ring: event.type === 'placed' ? event.ring : null,
@@ -128,9 +152,11 @@ export function recordStep(
 ): ProtocolRecorder {
   let next = recorder;
   for (const event of result.events) {
-    if (event.type === 'missed' && next.open !== null) {
-      next = { ...next, open: { ...next.open, misses: next.open.misses + 1 } };
-    } else if (event.type === 'spawned') {
+    const tapped = event.type === 'missed' || event.type === 'placed';
+    if (tapped && next.open !== null) {
+      next = { ...next, open: withTap(next.open, event.type === 'missed', timeMs) };
+    }
+    if (event.type === 'spawned') {
       // A step spawns at most one segment, the one that is in the centre now.
       next = { ...next, open: openSegment(result.state, timeMs) };
     } else {
