@@ -333,6 +333,13 @@ sind grün, `npm run screenshots` schreibt die Bilder, der
 Palette, Symbole, Schrift, Fugenbreite und Proportionen stehen danach in
 `grafik-audio.md`.
 
+**Hinweis aus dem Review von Meilenstein 1:** Der Glow der Platzhalter-Keile
+(Radius 0,012 der Feldbreite) füllt die Fugen (0,008) etwa zur Hälfte, sie sind
+grau statt dunkel. In einem einfarbigen Ring ist die Fuge die einzige Trennung
+(A2). Beim Festlegen der Fugenbreite prüfen, ob `grafik-audio.md` einen
+Grenzwert braucht (Mindestbreite bei 360 CSS-Pixeln, frei von Glow) und ob der
+Glow nur am Außenrand des Rings liegen soll.
+
 **Übergangsverhalten:**
 - Animationen fehlen noch: Segmente springen an ihren Platz, Rückmeldungen
   bleiben die einfachen aus den früheren Meilensteinen.
@@ -371,6 +378,11 @@ den Stufen intensiver.
 **Abschlusskriterium:** Der Test „jedes Ereignis löst seine Rückmeldung aus“ ist
 grün, der `grafik-audio-reviewer` hat neue Screenshots bewertet, und die
 Bildrate bleibt auf beiden Handys bei 60.
+
+**Hinweis aus dem Review von Meilenstein 1:** In der Leistungsprobe starten
+alle Partikel in der Mitte und sind dort am dichtesten und hellsten. Im Spiel
+dürfen Partikel die Mitte nicht verdecken (`grafik-audio.md`, Prüfliste Punkt
+2): Emitter liegen nicht in der Mitte.
 
 **Übergangsverhalten:**
 - Es gibt noch keinen Ton.
