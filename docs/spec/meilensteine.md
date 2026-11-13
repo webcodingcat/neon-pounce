@@ -61,7 +61,8 @@ und eine Partie lässt sich am Handy beliebig lang spielen.
 - Es gibt keinen Timer, keine Leben und kein Game Over. Die Partie endet nur
   durch Neuladen der Seite.
 - Ein Fehltipp zeigt nur die Rückmeldung (Ring wackelt) und kostet nichts.
-- Ein Wisch bei 0 Abwürfen wird ignoriert.
+- Ein Wisch bei 0 Abwürfen wird ignoriert. Eine Blockade bei 0 Abwürfen
+  beendet die Partie faktisch, bis Meilenstein 3 die Aufgabe bringt.
 - Es gilt dauerhaft Stufe 1 mit Multiplikator 1. Die Farbzahl kommt aus der
   Konfiguration (Startwert 3).
 - Punkte, Abwürfe und Combo stehen als einfache Zahlen am oberen Rand.
