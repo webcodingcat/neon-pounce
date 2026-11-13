@@ -494,10 +494,11 @@ Rauchtests sind nicht Teil des Hooks.
   das Basis-Regelset von ESLint, das zweite die Typen für Konfigurationsdateien
   und das spätere Simulationsskript.
 - Die CI (`.github/workflows/ci.yml`) führt bei jedem Push Linter, Typprüfung,
-  Vitest, Build und die Rauchtests aus. Das Deployment nach GitHub Pages fehlt
-  noch und kommt in Meilenstein 3, damit keine leere Seite unter dem Link steht.
-- Die `LICENSE` (MIT, Copyright WebCodingCat, Assets ausgenommen) liegt schon im
-  Repo. `README.md` und `docs/DEVELOPMENT.md` entstehen in Meilenstein 3.
+  Vitest, Build und die Rauchtests aus. Seit Meilenstein 3 veröffentlicht sie
+  bei jedem Push auf `main` den geprüften Build auf GitHub Pages. Im Repo ist
+  dafür unter Settings → Pages die Quelle „GitHub Actions“ eingestellt.
+- Die `LICENSE` (MIT, Copyright WebCodingCat, Assets ausgenommen) liegt im
+  Repo. `README.md` und `docs/DEVELOPMENT.md` gibt es seit Meilenstein 3.
 - Das Skript für README-Bilder entsteht in Meilenstein 9: `npm run screenshots` als
   eigener Playwright-Lauf mit festen Startwerten des Zufallsgenerators, der nach
   `docs/images/` schreibt, ohne neue Abhängigkeit und außerhalb des Stop-Hooks.
