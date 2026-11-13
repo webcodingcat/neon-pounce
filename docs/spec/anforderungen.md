@@ -432,8 +432,12 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
   sind, und einem ständigen Partikelstrom.
 - **A109** Protokoll: Im Entwicklungsserver zeichnet jede Partie je Segment auf:
   laufende Nummer, Art, Position, Farbe, Stufe, Timer-Zeit, Entscheidungszeit in
-  Millisekunden (Erscheinen bis Ende), Zahl der Fehltipps, Ausgang (`placed`,
-  `discarded`, `timeout`, `givenUp`) und Ring. Dazu einmal je Partie Startwert,
+  Millisekunden (Erscheinen bis Ende), Zeit bis zum ersten Tipp auf einen Ring
+  (leer, wenn es keinen gab), Zahl der Fehltipps, Ausgang (`placed`,
+  `discarded`, `timeout`, `givenUp`) und Ring. Für den Abgleich mit den Bots
+  außerdem den Stand beim Erscheinen: die Zahl der Ringe, in denen die Position
+  belegt ist (0 bis 6, 6 ist eine Blockade), und den Abwurf-Vorrat. Dazu einmal
+  je Partie Startwert,
   Konfiguration und Endstand. „Export“ gibt das als JSON-Datei an das
   Teilen-Menü des Geräts, auf dem Desktop als Download.
 - **A110** Testmodus: Mit dem Adresszusatz `?test=<Startwert>` nutzt die App
