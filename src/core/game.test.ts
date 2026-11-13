@@ -310,6 +310,20 @@ describe('combo (A46, A47)', () => {
     expect(table.state.score).toBe(before + PLACEMENT_POINTS + CLEAR_POINTS * MAX_COMBO_FACTOR);
   });
 
+  it('multiplies the single-colour factor and the combo factor (A45)', () => {
+    const table = startedTable();
+    table.set({
+      rings: boardWith({ 4: [2, 2, null, 2, 2, 2] }),
+      current: segment(2, 2),
+      combo: 2,
+      discards: 2,
+    });
+    const before = table.state.score;
+    table.tap(4);
+    expect(table.state.combo).toBe(3);
+    expect(table.state.score).toBe(before + PLACEMENT_POINTS + CLEAR_POINTS * MONO_FACTOR * 3);
+  });
+
   it('drops to 0 with a placement that clears nothing', () => {
     const table = startedTable();
     table.set({ rings: twoAlmostFull(), current: segment(2, 1), combo: 3 });
@@ -341,6 +355,16 @@ describe('discarding (A26, A14, A8)', () => {
     expect(table.state.current.id).not.toBe(before.current.id);
     expect(events).toContainEqual({ type: 'discarded', segment: before.current });
     expect(events).toContainEqual({ type: 'spawned', segment: table.state.current });
+  });
+
+  it('never lets the stock fall below 0', () => {
+    const table = startedTable();
+    table.set({ discards: 1 });
+    expect(eventTypes(table.swipe())).toContain('discarded');
+    expect(table.state.discards).toBe(0);
+    // What a swipe at 0 does is decided in milestone 3. The stock stays at 0.
+    table.swipe();
+    expect(table.state.discards).toBe(0);
   });
 
   it('ignores a swipe that was meant for a segment that is gone', () => {
