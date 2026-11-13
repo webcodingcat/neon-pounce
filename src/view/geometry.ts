@@ -3,8 +3,7 @@
 
 import { CENTER_RADIUS, GAP_WIDTH, RING_DISTANCE, RING_RADIUS, TIMER_ARC_RADIUS } from '../config';
 
-export const RING_COUNT = 6;
-export const SLOT_COUNT = 6;
+export { RING_COUNT, SLOT_COUNT } from '../core/types';
 
 /** Angle between two neighbouring rings and width of one slot. */
 const STEP = (2 * Math.PI) / 6;

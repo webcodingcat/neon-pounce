@@ -24,6 +24,39 @@ export const PROBE_MIN_MEAN_FPS = 58;
 /** The probe passes when the worst second still has this many frames. */
 export const PROBE_MIN_WORST_FPS = 50;
 
+// --- Game ---
+
+/** Discards in stock at the start of a game (A25). */
+export const START_DISCARDS = 3;
+
+/** The stock never holds more discards than this (A25). */
+export const MAX_DISCARDS = 5;
+
+/**
+ * Number of segment colours. Fixed until milestone 5 introduces the levels,
+ * which then set the number per level (A38).
+ */
+export const COLOR_COUNT = 3;
+
+// --- Scoring ---
+
+/** Points for a placement, before the level multiplier (A44). */
+export const PLACEMENT_POINTS = 10;
+
+/** Points for clearing a ring, before all factors (A45). */
+export const CLEAR_POINTS = 100;
+
+/** Factor for a ring of a single colour (A17). */
+export const MONO_FACTOR = 3;
+
+/** The combo factor never exceeds this (A46). */
+export const MAX_COMBO_FACTOR = 6;
+
+// --- Generator ---
+
+/** How often the bag holds each position (A32). */
+export const BAG_COPIES = 2;
+
 // --- Rendering ---
 
 /** Upper limit for the render resolution, also on devices with factor 3 (A97). */
