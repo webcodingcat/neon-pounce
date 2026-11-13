@@ -20,8 +20,10 @@ upright.
   discards. With none left, a swipe gives the segment up and costs a life.
 - A tap on a ring whose slot is taken costs time.
 - When the timer runs out you lose one of three lives.
+- With the last life the game is over and shows your score. "Again" starts a
+  new game.
 
-The game runs in Safari on iPhone and in Chrome on Android. It needs no
+The game is made for Safari on iPhone and Chrome on Android. It needs no
 account and sends no data anywhere.
 
 ## Put it on your home screen
