@@ -207,6 +207,10 @@ eine Partie durchläuft am Handy sichtbar mehrere Stufen.
   (Abschnitt 3 dort), soll auch die weiteren Startwerte abdecken: Abwürfe 3 und
   höchstens 5, Beutel 2, Einfarbig-Faktor 3, Combo-Faktor höchstens 6 und die
   Grundpunkte 10 und 100.
+- Aus dem Review von Meilenstein 3: Derselbe Test deckt auch 3 Leben, die
+  Strafstaffel 0,5 / 1 / 2 / 4 s und das Doppeltipp-Fenster von 100 ms ab. Der
+  Test „Summe der Strafstaffel über dem längsten Timer“ vergleicht dann mit dem
+  Maximum der Timer-Tabelle statt mit `TIMER_MS`.
 - Mit der vierten bis sechsten Farbe kommen die Platzhalter-Symbole Raute, Plus
   und Balken ins Spiel (`src/view/palette.ts`). Der Balken ist bei 360
   CSS-Pixeln nur etwa 7 Pixel hoch, in der Mitte knapp 6. Prüfen, ob er bis
@@ -368,6 +372,13 @@ Festlegen der Fugenbreite prüfen, ob der Glow nur am Außenrand des Rings liege
 soll und ob `grafik-audio.md` einen Grenzwert braucht (Mindestbreite bei 360
 CSS-Pixeln, frei von Glow). Falls ja, kommt er als Zeile in Abschnitt 3 und als
 Test aus der Geometrie.
+
+**Hinweis aus dem Review von Meilenstein 3:** Der Test für die Mindestgrößen
+soll auch die HUD-Schrift (`FONT_SIZE` in `src/view/hud.ts`) und die
+Schaltfläche „Again“ (`src/view/gameOverLayout.ts`) abdecken, auch bei
+niedrigem Bildschirm: Die Höhe von „Again“ ist 0,16 der Feldbreite und fällt
+unter 48 CSS-Pixel, sobald das Feld schmaler als 300 CSS-Pixel wird (Höhe
+unter 480).
 
 **Hinweise aus dem Review von Meilenstein 2:**
 - Das Segment in der Mitte ist das kleinste auf dem Feld: `CENTER_RADIUS` 0,13
