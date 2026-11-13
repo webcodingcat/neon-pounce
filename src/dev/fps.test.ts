@@ -72,6 +72,16 @@ describe('frame-rate statistics (A107)', () => {
     expect(summary.worst).toBe(50);
     expect(summary.mean).toBeCloseTo(50, 6);
   });
+
+  it('never lets the measured time run backwards after a resume', () => {
+    // The first frame after a resume can carry a time stamp from before it.
+    let stats = run(createFpsStats(), 0, 1500, 20);
+    stats = resumeFps(stats, 61_500);
+    stats = recordFrame(stats, 61_490);
+    expect(fpsSummary(stats).elapsedMs).toBe(1500);
+    stats = recordFrame(stats, 61_510);
+    expect(fpsSummary(stats).elapsedMs).toBe(1520);
+  });
 });
 
 describe('meetsProbeLimits', () => {

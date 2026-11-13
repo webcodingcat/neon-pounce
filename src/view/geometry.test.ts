@@ -18,6 +18,7 @@ import {
   type Disc,
   type Point,
 } from './geometry';
+import { fieldCenter, fieldLayout } from './layout';
 
 const DEG = Math.PI / 180;
 const SIN_60 = Math.sqrt(3) / 2;
@@ -96,6 +97,16 @@ describe('boardGeometry (A1, A3)', () => {
     expect(geometry.centerRadius).toBeGreaterThan(0);
     expect(geometry.timerArcRadius).toBeGreaterThan(geometry.centerRadius);
     expect(geometry.ringDistance - geometry.ringRadius).toBeGreaterThan(geometry.timerArcRadius);
+  });
+
+  it('keeps an outer ring at least 96 CSS pixels wide on a 360 pixel screen', () => {
+    // Limit from grafik-audio.md, section 3. A low viewport narrows the field.
+    const insets = { top: 0, right: 0, bottom: 0, left: 0 };
+    for (const height of [560, 800]) {
+      const field = fieldLayout({ width: 360, height }, insets);
+      const geometry = boardGeometry(fieldCenter(field), field.width);
+      expect(2 * geometry.ringRadius).toBeGreaterThanOrEqual(96);
+    }
   });
 
   it('fits all rings into the field', () => {
