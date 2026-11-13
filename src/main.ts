@@ -3,7 +3,7 @@ import { PERFORMANCE_PROBE } from './config';
 import { runProbe } from './probe/runProbe';
 import { renderResolution } from './view/layout';
 
-/** Placeholder until milestone 9 defines the palette. */
+/** Placeholder until milestone 9 defines the palette. Keep in sync with index.html. */
 const BACKGROUND_COLOR = 0x05060f;
 
 async function start(): Promise<void> {

@@ -90,7 +90,13 @@ function wedgeTexture(
   paintWithGlow(context, glow * resolution, () => {
     context.fill();
   });
-  return { texture: Texture.from(canvas), anchorX: origin.x / width, anchorY: origin.y / height };
+  // The canvas size is rounded up to whole pixels, so the anchor has to use the
+  // real size. Otherwise the wedges would not turn about the disc centre.
+  return {
+    texture: Texture.from(canvas),
+    anchorX: (origin.x * resolution) / canvas.width,
+    anchorY: (origin.y * resolution) / canvas.height,
+  };
 }
 
 function arcTexture(radius: number, lineWidth: number, glow: number, resolution: number) {
@@ -103,7 +109,12 @@ function arcTexture(radius: number, lineWidth: number, glow: number, resolution:
   paintWithGlow(context, glow * resolution, () => {
     context.stroke();
   });
-  return { texture: Texture.from(canvas), anchorX: 0.5, anchorY: 0.5 };
+  const middle = (size / 2) * resolution;
+  return {
+    texture: Texture.from(canvas),
+    anchorX: middle / canvas.width,
+    anchorY: middle / canvas.height,
+  };
 }
 
 /** Soft dot: bright core that fades out to the edge. */
