@@ -108,7 +108,8 @@ function close(recorder: ProtocolRecorder, event: GameEvent, timeMs: number): Pr
     color: open.color,
     level: open.level,
     timerMs: open.timerMs,
-    decisionMs: timeMs - open.sinceMs,
+    // The clock of the browser has fractions of a millisecond.
+    decisionMs: Math.round(timeMs - open.sinceMs),
     misses: open.misses,
     outcome,
     ring: event.type === 'placed' ? event.ring : null,

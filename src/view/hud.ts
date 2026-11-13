@@ -17,11 +17,14 @@ const MARGIN = 0.06;
 const ROW_STEP = 1.3;
 
 /** Asks for the text form of a character that also exists as an emoji. */
-const AS_TEXT = '︎';
-/** Placeholder symbols until milestone 9 draws the real ones. */
+const AS_TEXT = String.fromCharCode(0xfe0e);
+/**
+ * Placeholder symbols until milestone 9 draws the real ones. The give-up symbol
+ * must not look like the cross of the combo.
+ */
 const DISCARD_SYMBOLS: Readonly<Record<DiscardSymbol, string>> = {
   discard: '»',
-  giveUp: `✕${AS_TEXT}`,
+  giveUp: '!',
 };
 const LIFE = `♥${AS_TEXT}`;
 const LOST_LIFE = `♡${AS_TEXT}`;

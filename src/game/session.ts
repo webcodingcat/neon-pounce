@@ -145,10 +145,13 @@ export class Session {
     if (this.currentScreen === 'game') {
       this.take(advanceTime(this.round.state, nowMs, this.round.rng), nowMs);
     }
-    const { board, gameOver } = this.scene;
+    const { board, hud, gameOver } = this.scene;
     const state = this.round.state;
     board.setTimer(state.phase === 'playing' ? timerFraction(state, nowMs) : 0);
-    board.setFade(boardAlpha(state, nowMs));
+    // The HUD fades with the board, so Game Over does not cut it off.
+    const alpha = boardAlpha(state, nowMs);
+    board.setFade(alpha);
+    hud.container.alpha = alpha;
     board.update(nowMs);
     const active = buttonsActive(this.shownAtMs, nowMs);
     gameOver.setActive(active);

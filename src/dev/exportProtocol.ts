@@ -57,6 +57,7 @@ export function createExportButton(parent: HTMLElement): ExportButton {
     'left: 50%',
     'bottom: calc(env(safe-area-inset-bottom, 0px) + 24px)',
     'transform: translateX(-50%)',
+    'min-height: 48px',
     'padding: 10px 24px',
     'font: 700 16px/1.2 ui-monospace, Menlo, Consolas, monospace',
     'color: #bfefff',
