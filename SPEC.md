@@ -168,7 +168,7 @@ Stunde. Der Wechsel zu einer nativen Engine wäre ein Neubau der Darstellung.
 | Build und Entwicklungsserver | Vite | 8.3 |
 | Darstellung | PixiJS | 8.23 |
 | Ton | Web Audio API des Browsers | keine Bibliothek |
-| Offline und Installation | vite-plugin-pwa | 2.0 (ab Etappe 4) |
+| Offline und Installation | vite-plugin-pwa | 2.0 (ab Meilenstein 15) |
 
 **Sprache – Begründung:** TypeScript 6 statt 7, weil typescript-eslint 8.72
 laut seinen Paketangaben nur TypeScript unter 6.1 unterstützt. Mit TypeScript 7
@@ -488,7 +488,7 @@ Rauchtests sind nicht Teil des Hooks.
 **Abweichungen und Ergänzungen zur Spec:**
 
 - PixiJS ist seit Meilenstein 1 installiert (siehe Tabelle). `vite-plugin-pwa`
-  ist noch nicht installiert und kommt in Etappe 4 (wie geplant).
+  ist noch nicht installiert und kommt in Meilenstein 15 (wie geplant).
 - `@eslint/js` und `@types/node` standen nicht in Abschnitt 6. Das erste liefert
   das Basis-Regelset von ESLint, das zweite die Typen für Konfigurationsdateien
   und das spätere Simulationsskript.

@@ -21,7 +21,7 @@ hook), Playwright browsers (`npm run e2e:install`, once).
 ## Conventions and version decisions
 
 - TypeScript stays on 6.0.x while typescript-eslint requires `typescript <6.1`.
-- PixiJS 8.23 is installed. vite-plugin-pwa 2.0 is added in milestone 4.
+- PixiJS 8.23 is installed. vite-plugin-pwa 2.0 is added in milestone 15.
   Sound uses the Web Audio API without a library.
 - The rule core is plain TypeScript without dependencies and without browser
   APIs. It receives its random generator (seeded) and the time as arguments and
