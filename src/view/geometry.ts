@@ -1,8 +1,13 @@
 // Board geometry as pure functions (A1 to A3). Angles are radians, measured
 // clockwise from 12 o'clock. Coordinates are screen coordinates (y grows down).
 
+import { CENTER_RADIUS, GAP_WIDTH, RING_DISTANCE, RING_RADIUS, TIMER_ARC_RADIUS } from '../config';
+
 export const RING_COUNT = 6;
 export const SLOT_COUNT = 6;
+
+/** Angle between two neighbouring rings and width of one slot. */
+const STEP = (2 * Math.PI) / 6;
 
 export interface Point {
   readonly x: number;
@@ -38,35 +43,49 @@ export interface Disc {
   readonly gapWidth: number;
 }
 
-export function boardGeometry(center: Point, _fieldWidth: number): BoardGeometry {
+export function boardGeometry(center: Point, fieldWidth: number): BoardGeometry {
   return {
     center,
-    ringDistance: 0,
-    ringRadius: 0,
-    centerRadius: 0,
-    timerArcRadius: 0,
-    gapWidth: 0,
+    ringDistance: RING_DISTANCE * fieldWidth,
+    ringRadius: RING_RADIUS * fieldWidth,
+    centerRadius: CENTER_RADIUS * fieldWidth,
+    timerArcRadius: TIMER_ARC_RADIUS * fieldWidth,
+    gapWidth: GAP_WIDTH * fieldWidth,
   };
 }
 
-export function pointAt(origin: Point, _angle: number, _distance: number): Point {
-  return origin;
+export function pointAt(origin: Point, angle: number, distance: number): Point {
+  return {
+    x: origin.x + distance * Math.sin(angle),
+    y: origin.y - distance * Math.cos(angle),
+  };
 }
 
-export function ringCenter(geometry: BoardGeometry, _ring: number): Point {
-  return geometry.center;
+/** Centre of an outer ring. Ring 0 is at 12 o'clock, the others follow clockwise. */
+export function ringCenter(geometry: BoardGeometry, ring: number): Point {
+  return pointAt(geometry.center, ring * STEP, geometry.ringDistance);
 }
 
-export function slotMidAngle(_slot: number): number {
-  return 0;
+/** Angle of the middle of a slot. Slot 0 is at 1 o'clock. */
+export function slotMidAngle(slot: number): number {
+  return (slot + 0.5) * STEP;
 }
 
-export function slotWedge(disc: Disc, _slot: number): Wedge {
+/**
+ * Wedge of a slot. Both straight edges are moved inwards by half the gap
+ * width, so neighbouring wedges are separated by a gap of constant width.
+ */
+export function slotWedge(disc: Disc, slot: number): Wedge {
+  const halfGap = disc.gapWidth / 2;
+  // The edges stay parallel to the slot borders: the apex moves out along the
+  // bisector, the ends of the rim move towards the middle of the slot.
+  const apexDistance = halfGap / Math.sin(STEP / 2);
+  const rimInset = Math.asin(halfGap / disc.radius);
   return {
     origin: disc.origin,
-    apex: disc.origin,
+    apex: pointAt(disc.origin, slotMidAngle(slot), apexDistance),
     radius: disc.radius,
-    startAngle: 0,
-    endAngle: 0,
+    startAngle: slot * STEP + rimInset,
+    endAngle: (slot + 1) * STEP - rimInset,
   };
 }

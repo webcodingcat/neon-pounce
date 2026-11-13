@@ -1,5 +1,6 @@
 // Field layout as pure functions (A4, A97). All values are CSS pixels.
 
+import { MAX_FIELD_WIDTH, MAX_RENDER_RESOLUTION, MIN_FIELD_ASPECT } from '../config';
 import type { Point } from './geometry';
 
 export interface Size {
@@ -23,14 +24,28 @@ export interface FieldLayout {
   readonly height: number;
 }
 
-export function fieldLayout(_viewport: Size, _insets: Insets): FieldLayout {
-  return { x: 0, y: 0, width: 0, height: 0 };
+/**
+ * The field uses the full height between the safe areas. Its width is limited
+ * by the available width, by the maximum width and by the height, so the field
+ * always stays a portrait rectangle.
+ */
+export function fieldLayout(viewport: Size, insets: Insets): FieldLayout {
+  const availableWidth = Math.max(0, viewport.width - insets.left - insets.right);
+  const height = Math.max(0, viewport.height - insets.top - insets.bottom);
+  const width = Math.min(availableWidth, MAX_FIELD_WIDTH, height / MIN_FIELD_ASPECT);
+  return {
+    x: insets.left + (availableWidth - width) / 2,
+    y: insets.top,
+    width,
+    height,
+  };
 }
 
-export function fieldCenter(_field: FieldLayout): Point {
-  return { x: 0, y: 0 };
+export function fieldCenter(field: FieldLayout): Point {
+  return { x: field.x + field.width / 2, y: field.y + field.height / 2 };
 }
 
-export function renderResolution(_devicePixelRatio: number): number {
-  return 1;
+/** Render resolution for a device pixel ratio, capped to protect the frame rate. */
+export function renderResolution(devicePixelRatio: number): number {
+  return Math.min(devicePixelRatio, MAX_RENDER_RESOLUTION);
 }

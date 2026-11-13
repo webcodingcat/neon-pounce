@@ -9,6 +9,15 @@ export const PERFORMANCE_PROBE = true;
 /** Length of one probe run in milliseconds. */
 export const PROBE_DURATION_MS = 300_000;
 
+/** Number of particles that stream across the probe. */
+export const PROBE_PARTICLE_COUNT = 300;
+
+/** Time a probe particle needs from the centre to the edge, in milliseconds. */
+export const PROBE_PARTICLE_LIFE_MS = 2400;
+
+/** Length of one pulse of a probe segment in milliseconds. */
+export const PROBE_PULSE_MS = 1600;
+
 /** The probe passes with at least this mean frame rate. */
 export const PROBE_MIN_MEAN_FPS = 58;
 
