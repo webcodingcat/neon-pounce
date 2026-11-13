@@ -27,6 +27,11 @@ declare global {
  * The seed from the query string of the address, or null without test mode.
  * A seed is a whole number from 0.
  */
-export function testSeed(_search: string): number | null {
-  return null;
+export function testSeed(search: string): number | null {
+  const value = new URLSearchParams(search).get('test');
+  if (value === null || !/^\d+$/.test(value)) {
+    return null;
+  }
+  const seed = Number(value);
+  return Number.isSafeInteger(seed) ? seed : null;
 }

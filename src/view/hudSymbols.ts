@@ -3,6 +3,6 @@
 export type DiscardSymbol = 'discard' | 'giveUp';
 
 /** With an empty stock the HUD shows the give-up symbol instead (A28). */
-export function discardSymbol(_discards: number): DiscardSymbol {
-  return 'discard';
+export function discardSymbol(discards: number): DiscardSymbol {
+  return discards > 0 ? 'discard' : 'giveUp';
 }

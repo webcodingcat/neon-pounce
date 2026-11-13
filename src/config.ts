@@ -94,6 +94,12 @@ export const SHAKE_MS = 300;
 /** How long a cleared ring flashes, in milliseconds. */
 export const FLASH_MS = 400;
 
+/** How long the taken slots of a blockade blink, in milliseconds (A30). */
+export const BLOCKADE_FLASH_MS = 600;
+
+/** How long the first segment takes to slide out and spring back, in milliseconds (A15). */
+export const BOUNCE_MS = 250;
+
 // --- Rendering ---
 
 /** Upper limit for the render resolution, also on devices with factor 3 (A97). */

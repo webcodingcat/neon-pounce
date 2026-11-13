@@ -2,7 +2,17 @@
 // seed, configuration and final state once per game. Pure functions, the
 // export itself lives in exportProtocol.ts.
 
-import type { GameState, StepResult } from '../core/types';
+import {
+  BAG_COPIES,
+  COLOR_COUNT,
+  DOUBLE_TAP_MS,
+  MAX_DISCARDS,
+  MISS_PENALTIES_MS,
+  START_DISCARDS,
+  START_LIVES,
+  TIMER_MS,
+} from '../config';
+import type { GameEvent, GameState, StepResult } from '../core/types';
 
 /** How a segment ended. */
 export type SegmentOutcome = 'placed' | 'discarded' | 'timeout' | 'givenUp';
@@ -60,29 +70,101 @@ export interface ProtocolRecorder {
   readonly open: OpenSegment | null;
 }
 
+/** The segment in the centre of `state`, which appeared at `sinceMs`. */
+function openSegment(state: GameState, sinceMs: number): OpenSegment {
+  return {
+    position: state.current.position,
+    color: state.current.color,
+    level: state.level,
+    timerMs: state.timerMs,
+    sinceMs,
+    misses: 0,
+  };
+}
+
 /** Starts the protocol of a game that was just created at `timeMs`. */
-export function startProtocol(seed: number, _state: GameState, _timeMs: number): ProtocolRecorder {
-  return { seed, segments: [], open: null };
+export function startProtocol(seed: number, state: GameState, timeMs: number): ProtocolRecorder {
+  return { seed, segments: [], open: openSegment(state, timeMs) };
+}
+
+const OUTCOMES: Partial<Record<GameEvent['type'], SegmentOutcome>> = {
+  placed: 'placed',
+  discarded: 'discarded',
+  timedOut: 'timeout',
+  gaveUp: 'givenUp',
+};
+
+/** Closes the record of the segment in the centre. */
+function close(recorder: ProtocolRecorder, event: GameEvent, timeMs: number): ProtocolRecorder {
+  const outcome = OUTCOMES[event.type];
+  const open = recorder.open;
+  if (outcome === undefined || open === null) {
+    return recorder;
+  }
+  const record: SegmentRecord = {
+    number: recorder.segments.length + 1,
+    kind: 'normal',
+    position: open.position,
+    color: open.color,
+    level: open.level,
+    timerMs: open.timerMs,
+    decisionMs: timeMs - open.sinceMs,
+    misses: open.misses,
+    outcome,
+    ring: event.type === 'placed' ? event.ring : null,
+  };
+  return { ...recorder, segments: [...recorder.segments, record], open: null };
 }
 
 /**
  * Adds what one step of the game did. `timeMs` is the time of the step, the
- * same that the rule core received.
+ * same that the rule core received: every event of the step happened then.
  */
 export function recordStep(
   recorder: ProtocolRecorder,
-  _result: StepResult,
-  _timeMs: number,
+  result: StepResult,
+  timeMs: number,
 ): ProtocolRecorder {
-  return recorder;
+  let next = recorder;
+  for (const event of result.events) {
+    if (event.type === 'missed' && next.open !== null) {
+      next = { ...next, open: { ...next.open, misses: next.open.misses + 1 } };
+    } else if (event.type === 'spawned') {
+      // A step spawns at most one segment, the one that is in the centre now.
+      next = { ...next, open: openSegment(result.state, timeMs) };
+    } else {
+      next = close(next, event, timeMs);
+    }
+  }
+  return next;
+}
+
+/** The values of the configuration that shape a game. */
+function protocolConfig(): ProtocolConfig {
+  return {
+    timerMs: TIMER_MS,
+    colorCount: COLOR_COUNT,
+    bagCopies: BAG_COPIES,
+    startLives: START_LIVES,
+    startDiscards: START_DISCARDS,
+    maxDiscards: MAX_DISCARDS,
+    missPenaltiesMs: MISS_PENALTIES_MS,
+    doubleTapMs: DOUBLE_TAP_MS,
+  };
 }
 
 /** The finished protocol with the final state. A segment still in the centre is left out. */
-export function finishProtocol(recorder: ProtocolRecorder, _state: GameState): GameProtocol {
+export function finishProtocol(recorder: ProtocolRecorder, state: GameState): GameProtocol {
   return {
-    seed: 0,
-    config: {},
+    seed: recorder.seed,
+    config: protocolConfig(),
     segments: recorder.segments,
-    result: { score: 0, moves: 0, level: 0, lives: 0, discards: 0 },
+    result: {
+      score: state.score,
+      moves: state.moves,
+      level: state.level,
+      lives: state.lives,
+      discards: state.discards,
+    },
   };
 }

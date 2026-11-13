@@ -20,6 +20,11 @@ export interface BoardTextures {
   readonly centerWedge: GlowTexture;
   /** Full circle of the timer arc. */
   readonly timerArc: GlowTexture;
+  /**
+   * One of `TIMER_PIECES` equal pieces of the timer arc, the one that starts at
+   * 12 o'clock. The others are rotations of it.
+   */
+  readonly timerPiece: GlowTexture;
   readonly particle: GlowTexture;
   /** Outline of an outer ring. */
   readonly ringOutline: GlowTexture;
@@ -38,8 +43,17 @@ const PARTICLE_RADIUS = 0.008;
 const OUTLINE_WIDTH = 0.004;
 /** Half the size of a symbol, as a fraction of the ring radius. */
 export const SYMBOL_SIZE = 0.17;
+/** Number of pieces the running timer arc is built from. */
+export const TIMER_PIECES = 60;
 
 const QUARTER_TURN = Math.PI / 2;
+
+/** A circle line in CSS pixels. */
+interface ArcLine {
+  readonly radius: number;
+  readonly lineWidth: number;
+  readonly glow: number;
+}
 
 interface Sheet {
   readonly canvas: HTMLCanvasElement;
@@ -133,6 +147,31 @@ function arcTexture(
   };
 }
 
+/**
+ * Piece of a circle line that starts at 12 o'clock and runs clockwise over
+ * `sweep` radians. Its anchor is the centre of the circle, which lies outside
+ * the canvas.
+ */
+function arcPieceTexture(arc: ArcLine, sweep: number, resolution: number): GlowTexture {
+  const pad = arc.lineWidth + 2 * arc.glow;
+  const width = arc.radius * Math.sin(sweep) + 2 * pad;
+  const height = arc.radius * (1 - Math.cos(sweep)) + 2 * pad;
+  const origin = { x: pad, y: pad + arc.radius };
+  const { canvas, context } = createSheet(width, height, resolution);
+  context.beginPath();
+  context.arc(origin.x, origin.y, arc.radius, -QUARTER_TURN, sweep - QUARTER_TURN);
+  context.lineWidth = arc.lineWidth;
+  context.strokeStyle = '#ffffff';
+  paintWithGlow(context, arc.glow * resolution, () => {
+    context.stroke();
+  });
+  return {
+    texture: Texture.from(canvas),
+    anchorX: (origin.x * resolution) / canvas.width,
+    anchorY: (origin.y * resolution) / canvas.height,
+  };
+}
+
 /** Filled disc with a glow around it. */
 function discTexture(radius: number, glow: number, resolution: number): GlowTexture {
   const size = 2 * (radius + 2 * glow);
@@ -194,10 +233,12 @@ export function createBoardTextures(
   resolution: number,
 ): BoardTextures {
   const glow = GLOW * fieldWidth;
+  const timerLine = { radius: geometry.timerArcRadius, lineWidth: ARC_WIDTH * fieldWidth, glow };
   return {
     ringWedge: wedgeTexture(geometry.ringRadius, geometry.gapWidth, glow, resolution),
     centerWedge: wedgeTexture(geometry.centerRadius, geometry.gapWidth, glow, resolution),
     timerArc: arcTexture(geometry.timerArcRadius, ARC_WIDTH * fieldWidth, glow, resolution),
+    timerPiece: arcPieceTexture(timerLine, (2 * Math.PI) / TIMER_PIECES, resolution),
     particle: particleTexture(PARTICLE_RADIUS * fieldWidth, resolution),
     ringOutline: arcTexture(geometry.ringRadius, OUTLINE_WIDTH * fieldWidth, glow, resolution),
     ringDisc: discTexture(geometry.ringRadius, glow, resolution),
@@ -213,6 +254,7 @@ export function destroyBoardTextures(textures: BoardTextures): void {
     textures.ringWedge,
     textures.centerWedge,
     textures.timerArc,
+    textures.timerPiece,
     textures.particle,
     textures.ringOutline,
     textures.ringDisc,
