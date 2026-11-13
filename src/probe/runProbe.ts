@@ -35,8 +35,10 @@ function startFpsDisplay(app: Application): void {
   const overlay = createFpsOverlay(document.body);
   let stats = createFpsStats();
   let shownSecond = -1;
-  app.ticker.add((ticker) => {
-    stats = recordFrame(stats, ticker.lastTime);
+  // Not ticker.lastTime: inside a listener that is still the previous frame, so
+  // the first frames after a resume would bring the hidden time back.
+  app.ticker.add(() => {
+    stats = recordFrame(stats, performance.now());
     const second = Math.floor(stats.elapsedMs / 1000);
     if (second !== shownSecond) {
       shownSecond = second;
@@ -57,8 +59,8 @@ export function runProbe(app: Application): void {
     destroyScene(scene);
     scene = buildScene(app);
   });
-  app.ticker.add((ticker) => {
-    scene.probe.update(ticker.lastTime);
+  app.ticker.add(() => {
+    scene.probe.update(performance.now());
   });
   if (import.meta.env.DEV) {
     startFpsDisplay(app);
