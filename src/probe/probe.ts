@@ -2,7 +2,7 @@
 // the time, plus a steady stream of particles. Everything is built once. A
 // frame only changes position, scale, alpha and rotation.
 
-import { Container, Particle, ParticleContainer, Sprite } from 'pixi.js';
+import { Container, Particle, ParticleContainer, type Sprite } from 'pixi.js';
 import { PROBE_PARTICLE_COUNT, PROBE_PARTICLE_LIFE_MS, PROBE_PULSE_MS } from '../config';
 import {
   RING_COUNT,
@@ -11,11 +11,9 @@ import {
   type BoardGeometry,
   type Point,
 } from '../view/geometry';
-import type { BoardTextures, GlowTexture } from '../view/textures';
-
-/** Placeholder colours until milestone 9 defines the palette. */
-const TINTS = [0xff3b6b, 0xffb300, 0x3dff7c, 0x21d4fd, 0x7a5cff, 0xff4dff] as const;
-const ARC_TINT = 0x8fd8ff;
+import { FRAME_TINT, segmentTint } from '../view/palette';
+import { glowSprite } from '../view/sprites';
+import type { BoardTextures } from '../view/textures';
 
 const SLOT_STEP = (2 * Math.PI) / SLOT_COUNT;
 const FULL_TURN = 2 * Math.PI;
@@ -38,18 +36,6 @@ interface Streaming {
   readonly phase: number;
 }
 
-function tintAt(index: number): number {
-  return TINTS[index % TINTS.length] ?? 0xffffff;
-}
-
-function glowSprite(glow: GlowTexture, origin: Point, resolution: number): Sprite {
-  const sprite = new Sprite(glow.texture);
-  sprite.anchor.set(glow.anchorX, glow.anchorY);
-  sprite.position.set(origin.x, origin.y);
-  sprite.scale.set(1 / resolution);
-  return sprite;
-}
-
 export class Probe {
   readonly container = new Container();
 
@@ -69,7 +55,7 @@ export class Probe {
     this.container.addChild(this.createParticles(textures));
     this.addRings(geometry, textures);
     const arc = glowSprite(textures.timerArc, geometry.center, textures.resolution);
-    arc.tint = ARC_TINT;
+    arc.tint = FRAME_TINT;
     this.centerSegment = glowSprite(textures.centerWedge, geometry.center, textures.resolution);
     this.container.addChild(arc, this.centerSegment);
   }
@@ -90,7 +76,7 @@ export class Probe {
     }
     const slot = Math.floor(nowMs / CENTER_STEP_MS) % SLOT_COUNT;
     this.centerSegment.rotation = slot * SLOT_STEP;
-    this.centerSegment.tint = tintAt(slot);
+    this.centerSegment.tint = segmentTint(slot);
   }
 
   destroy(): void {
@@ -103,7 +89,7 @@ export class Probe {
       for (let slot = 0; slot < SLOT_COUNT; slot += 1) {
         const sprite = glowSprite(textures.ringWedge, origin, textures.resolution);
         sprite.rotation = slot * SLOT_STEP;
-        sprite.tint = tintAt(ring + slot);
+        sprite.tint = segmentTint(ring + slot);
         this.segments.push({ sprite, phase: (ring * SLOT_COUNT + slot) / 36 });
         this.container.addChild(sprite);
       }
@@ -123,7 +109,7 @@ export class Probe {
         anchorY: textures.particle.anchorY,
         scaleX: this.baseScale,
         scaleY: this.baseScale,
-        tint: tintAt(index),
+        tint: segmentTint(index),
       });
       particles.addParticle(particle);
       this.stream.push({

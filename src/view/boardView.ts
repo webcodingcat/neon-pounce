@@ -1,0 +1,199 @@
+// Draws the board of a game: six rings with their segments and the current
+// segment in the centre. All sprites are built once. Afterwards only
+// visibility, tint, position and alpha change (A97).
+
+import { Container, type Sprite } from 'pixi.js';
+import { FLASH_MS, SHAKE_MS } from '../config';
+import type { GameEvent, GameState, Segment } from '../core/types';
+import {
+  RING_COUNT,
+  SLOT_COUNT,
+  pointAt,
+  ringCenter,
+  slotMidAngle,
+  type BoardGeometry,
+  type Point,
+} from './geometry';
+import { FRAME_TINT, SYMBOL_TINT, segmentTint } from './palette';
+import { glowSprite } from './sprites';
+import type { BoardTextures, GlowTexture } from './textures';
+
+const SLOT_STEP = (2 * Math.PI) / SLOT_COUNT;
+const ORIGIN: Point = { x: 0, y: 0 };
+/** Where the symbol sits on its wedge, as a fraction of the disc radius. */
+const SYMBOL_DISTANCE = 0.62;
+const OUTLINE_ALPHA = 0.35;
+/** How far a ring moves when it shakes, as a fraction of its radius. */
+const SHAKE_REACH = 0.1;
+const SHAKE_SWINGS = 3;
+const FLASH_ALPHA = 0.9;
+const WHITE = 0xffffff;
+
+/** A wedge with its symbol. */
+interface SlotView {
+  readonly wedge: Sprite;
+  readonly symbol: Sprite;
+}
+
+/** What the slots of one kind of disc (outer ring or centre) are built from. */
+interface DiscKit {
+  readonly wedge: GlowTexture;
+  readonly radius: number;
+  /** Size of the symbols compared to those of an outer ring. */
+  readonly symbolScale: number;
+}
+
+interface RingView {
+  readonly container: Container;
+  readonly origin: Point;
+  readonly slots: readonly SlotView[];
+  readonly flash: Sprite;
+  /** Start times of the running effects, or null. */
+  shakeStart: number | null;
+  flashStart: number | null;
+}
+
+/** How far an effect has run, from 0 to 1, or null when it is over. */
+function progress(start: number | null, nowMs: number, durationMs: number): number | null {
+  if (start === null) {
+    return null;
+  }
+  const value = (nowMs - start) / durationMs;
+  return value >= 0 && value < 1 ? value : null;
+}
+
+export class BoardView {
+  readonly container = new Container();
+
+  private readonly textures: BoardTextures;
+  private readonly rings: RingView[] = [];
+  /** One view per position: the centre shows the one of the current segment. */
+  private readonly center: SlotView[] = [];
+  private readonly shakeReach: number;
+
+  constructor(geometry: BoardGeometry, textures: BoardTextures) {
+    this.textures = textures;
+    this.shakeReach = SHAKE_REACH * geometry.ringRadius;
+    const disc: DiscKit = {
+      wedge: textures.ringWedge,
+      radius: geometry.ringRadius,
+      symbolScale: 1,
+    };
+    for (let ring = 0; ring < RING_COUNT; ring += 1) {
+      const view = this.createRing(ringCenter(geometry, ring), disc);
+      this.rings.push(view);
+      this.container.addChild(view.container);
+    }
+    this.container.addChild(this.createCenter(geometry));
+  }
+
+  /** Shows the state. Segments jump to their place. */
+  render(state: GameState): void {
+    this.rings.forEach((ring, ringIndex) => {
+      ring.slots.forEach((slot, position) => {
+        this.showSlot(slot, state.rings[ringIndex]?.[position] ?? null);
+      });
+    });
+    this.center.forEach((slot, position) => {
+      this.showSlot(slot, position === state.current.position ? state.current : null);
+    });
+  }
+
+  /** Starts the feedback for what just happened. */
+  play(events: readonly GameEvent[], nowMs: number): void {
+    for (const event of events) {
+      const ring = 'ring' in event ? this.rings[event.ring] : undefined;
+      if (ring === undefined) {
+        continue;
+      }
+      if (event.type === 'missed') {
+        ring.shakeStart = nowMs;
+      } else if (event.type === 'cleared') {
+        ring.flashStart = nowMs;
+        // A single-colour ring flashes in its colour, any other in white.
+        ring.flash.tint = event.color === null ? WHITE : segmentTint(event.color);
+      }
+    }
+  }
+
+  /** Moves the running effects to their state at time `nowMs`. */
+  update(nowMs: number): void {
+    for (const ring of this.rings) {
+      const shake = progress(ring.shakeStart, nowMs, SHAKE_MS);
+      const swing = shake === null ? 0 : Math.sin(shake * SHAKE_SWINGS * 2 * Math.PI) * (1 - shake);
+      ring.container.x = ring.origin.x + swing * this.shakeReach;
+      const flash = progress(ring.flashStart, nowMs, FLASH_MS);
+      ring.flash.visible = flash !== null;
+      ring.flash.alpha = flash === null ? 0 : FLASH_ALPHA * (1 - flash);
+    }
+  }
+
+  destroy(): void {
+    this.container.destroy({ children: true });
+  }
+
+  /** A wedge at `position` of a disc around the origin of `parent`, with its symbol. */
+  private createSlot(parent: Container, position: number, disc: DiscKit): SlotView {
+    const resolution = this.textures.resolution;
+    const wedge = glowSprite(disc.wedge, ORIGIN, resolution);
+    wedge.rotation = position * SLOT_STEP;
+    wedge.visible = false;
+    const spot = pointAt(ORIGIN, slotMidAngle(position), SYMBOL_DISTANCE * disc.radius);
+    const symbol = glowSprite(this.symbolTexture(0), spot, resolution);
+    symbol.scale.set(disc.symbolScale / resolution);
+    symbol.tint = SYMBOL_TINT;
+    symbol.visible = false;
+    parent.addChild(wedge, symbol);
+    return { wedge, symbol };
+  }
+
+  private symbolTexture(color: number): GlowTexture {
+    const symbols = this.textures.symbols;
+    return symbols[color % symbols.length] ?? this.textures.particle;
+  }
+
+  private showSlot(slot: SlotView, segment: Segment | null): void {
+    slot.wedge.visible = segment !== null;
+    slot.symbol.visible = segment !== null;
+    if (segment !== null) {
+      slot.wedge.tint = segmentTint(segment.color);
+      slot.symbol.texture = this.symbolTexture(segment.color).texture;
+    }
+  }
+
+  private createRing(origin: Point, disc: DiscKit): RingView {
+    const container = new Container();
+    container.position.set(origin.x, origin.y);
+    const outline = glowSprite(this.textures.ringOutline, ORIGIN, this.textures.resolution);
+    outline.tint = FRAME_TINT;
+    outline.alpha = OUTLINE_ALPHA;
+    container.addChild(outline);
+    const slots = Array.from({ length: SLOT_COUNT }, (_, position) =>
+      this.createSlot(container, position, disc),
+    );
+    const flash = glowSprite(this.textures.ringDisc, ORIGIN, this.textures.resolution);
+    flash.blendMode = 'add';
+    flash.visible = false;
+    container.addChild(flash);
+    return { container, origin, slots, flash, shakeStart: null, flashStart: null };
+  }
+
+  private createCenter(geometry: BoardGeometry): Container {
+    const container = new Container();
+    container.position.set(geometry.center.x, geometry.center.y);
+    const arc = glowSprite(this.textures.timerArc, ORIGIN, this.textures.resolution);
+    arc.tint = FRAME_TINT;
+    arc.alpha = OUTLINE_ALPHA;
+    container.addChild(arc);
+    const disc: DiscKit = {
+      wedge: this.textures.centerWedge,
+      radius: geometry.centerRadius,
+      // The symbols are sized for an outer ring. The centre disc is smaller.
+      symbolScale: geometry.centerRadius / geometry.ringRadius,
+    };
+    for (let position = 0; position < SLOT_COUNT; position += 1) {
+      this.center.push(this.createSlot(container, position, disc));
+    }
+    return container;
+  }
+}

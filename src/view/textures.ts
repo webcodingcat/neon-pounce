@@ -4,6 +4,7 @@
 
 import { Texture } from 'pixi.js';
 import { slotWedge, type BoardGeometry, type Wedge } from './geometry';
+import { SEGMENT_SYMBOLS, type SymbolOutline } from './palette';
 
 /** A texture with the point (0 to 1) that belongs on the origin of its shape. */
 export interface GlowTexture {
@@ -20,6 +21,12 @@ export interface BoardTextures {
   /** Full circle of the timer arc. */
   readonly timerArc: GlowTexture;
   readonly particle: GlowTexture;
+  /** Outline of an outer ring. */
+  readonly ringOutline: GlowTexture;
+  /** Filled disc of an outer ring, for the flash of a cleared ring. */
+  readonly ringDisc: GlowTexture;
+  /** Symbol of each segment colour, sized for a wedge of an outer ring. */
+  readonly symbols: readonly GlowTexture[];
   /** Texture pixels per CSS pixel. Sprites are scaled by 1 / resolution. */
   readonly resolution: number;
 }
@@ -28,6 +35,9 @@ export interface BoardTextures {
 const GLOW = 0.012;
 const ARC_WIDTH = 0.01;
 const PARTICLE_RADIUS = 0.008;
+const OUTLINE_WIDTH = 0.004;
+/** Half the size of a symbol, as a fraction of the ring radius. */
+export const SYMBOL_SIZE = 0.17;
 
 const QUARTER_TURN = Math.PI / 2;
 
@@ -99,7 +109,13 @@ function wedgeTexture(
   };
 }
 
-function arcTexture(radius: number, lineWidth: number, glow: number, resolution: number) {
+/** Full circle line with a glow around it. */
+function arcTexture(
+  radius: number,
+  lineWidth: number,
+  glow: number,
+  resolution: number,
+): GlowTexture {
   const size = 2 * (radius + lineWidth + 2 * glow);
   const { canvas, context } = createSheet(size, size, resolution);
   context.beginPath();
@@ -114,6 +130,47 @@ function arcTexture(radius: number, lineWidth: number, glow: number, resolution:
     texture: Texture.from(canvas),
     anchorX: middle / canvas.width,
     anchorY: middle / canvas.height,
+  };
+}
+
+/** Filled disc with a glow around it. */
+function discTexture(radius: number, glow: number, resolution: number): GlowTexture {
+  const size = 2 * (radius + 2 * glow);
+  const { canvas, context } = createSheet(size, size, resolution);
+  context.beginPath();
+  context.arc(size / 2, size / 2, radius, 0, 2 * Math.PI);
+  context.fillStyle = '#ffffff';
+  paintWithGlow(context, glow * resolution, () => {
+    context.fill();
+  });
+  const middle = (size / 2) * resolution;
+  return {
+    texture: Texture.from(canvas),
+    anchorX: middle / canvas.width,
+    anchorY: middle / canvas.height,
+  };
+}
+
+/** A symbol without glow: it sits dark on a bright wedge. */
+function symbolTexture(outline: SymbolOutline, half: number, resolution: number): GlowTexture {
+  // One pixel of room, so the edge is not cut off.
+  const middle = half + 1;
+  const { canvas, context } = createSheet(2 * middle, 2 * middle, resolution);
+  context.beginPath();
+  if (outline === null) {
+    context.arc(middle, middle, half, 0, 2 * Math.PI);
+  } else {
+    for (const [x, y] of outline) {
+      context.lineTo(middle + x * half, middle + y * half);
+    }
+    context.closePath();
+  }
+  context.fillStyle = '#ffffff';
+  context.fill();
+  return {
+    texture: Texture.from(canvas),
+    anchorX: (middle * resolution) / canvas.width,
+    anchorY: (middle * resolution) / canvas.height,
   };
 }
 
@@ -142,6 +199,11 @@ export function createBoardTextures(
     centerWedge: wedgeTexture(geometry.centerRadius, geometry.gapWidth, glow, resolution),
     timerArc: arcTexture(geometry.timerArcRadius, ARC_WIDTH * fieldWidth, glow, resolution),
     particle: particleTexture(PARTICLE_RADIUS * fieldWidth, resolution),
+    ringOutline: arcTexture(geometry.ringRadius, OUTLINE_WIDTH * fieldWidth, glow, resolution),
+    ringDisc: discTexture(geometry.ringRadius, glow, resolution),
+    symbols: SEGMENT_SYMBOLS.map((outline) =>
+      symbolTexture(outline, SYMBOL_SIZE * geometry.ringRadius, resolution),
+    ),
     resolution,
   };
 }
@@ -152,6 +214,9 @@ export function destroyBoardTextures(textures: BoardTextures): void {
     textures.centerWedge,
     textures.timerArc,
     textures.particle,
+    textures.ringOutline,
+    textures.ringDisc,
+    ...textures.symbols,
   ]) {
     glowTexture.texture.destroy(true);
   }

@@ -4,7 +4,7 @@
 // --- Development ---
 
 /** Replaces the game with the performance probe (A108). */
-export const PERFORMANCE_PROBE = true;
+export const PERFORMANCE_PROBE = false;
 
 /** Length of one probe run in milliseconds. */
 export const PROBE_DURATION_MS = 300_000;
@@ -56,6 +56,14 @@ export const MAX_COMBO_FACTOR = 6;
 
 /** How often the bag holds each position (A32). */
 export const BAG_COPIES = 2;
+
+// --- Feedback ---
+
+/** How long a ring shakes after a miss, in milliseconds. */
+export const SHAKE_MS = 300;
+
+/** How long a cleared ring flashes, in milliseconds. */
+export const FLASH_MS = 400;
 
 // --- Rendering ---
 

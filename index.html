@@ -13,6 +13,10 @@
         /* Same colour as BACKGROUND_COLOR in src/main.ts. */
         background: #05060f;
         touch-action: none;
+        /* A long press must not select anything or open a menu. */
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
       }
 
       canvas {

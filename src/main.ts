@@ -1,5 +1,6 @@
 import { Application } from 'pixi.js';
 import { PERFORMANCE_PROBE } from './config';
+import { runGame } from './game/runGame';
 import { runProbe } from './probe/runProbe';
 import { renderResolution } from './view/layout';
 
@@ -17,10 +18,11 @@ async function start(): Promise<void> {
     preference: 'webgl',
   });
   document.body.appendChild(app.canvas);
-  // The game itself starts with milestone 2. Until then there is only the probe.
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- config switch
   if (PERFORMANCE_PROBE) {
     runProbe(app);
+  } else {
+    runGame(app);
   }
 }
 
