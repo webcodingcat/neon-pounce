@@ -202,6 +202,16 @@ Highscore)
 **Abschlusskriterium:** Die Tests zu Stufen, Punkten und Combo sind grün, und
 eine Partie durchläuft am Handy sichtbar mehrere Stufen.
 
+**Hinweise aus dem Review von Meilenstein 2:**
+- Der Test, der die Konfiguration gegen die Tabellen in `balance.md` abgleicht
+  (Abschnitt 3 dort), soll auch die weiteren Startwerte abdecken: Abwürfe 3 und
+  höchstens 5, Beutel 2, Einfarbig-Faktor 3, Combo-Faktor höchstens 6 und die
+  Grundpunkte 10 und 100.
+- Mit der vierten bis sechsten Farbe kommen die Platzhalter-Symbole Raute, Plus
+  und Balken ins Spiel (`src/view/palette.ts`). Der Balken ist bei 360
+  CSS-Pixeln nur etwa 7 Pixel hoch, in der Mitte knapp 6. Prüfen, ob er bis
+  Meilenstein 9 dicker werden muss.
+
 **Übergangsverhalten:**
 - Game Over zeigt Punkte, erreichte Stufe, einfarbige Ringe und längste Combo,
   aber weder Highscore noch „Menu“.
@@ -238,6 +248,13 @@ Spielwerte abgestimmt werden.
 run sim` schreibt einen Bericht mit allen Messwerten aus A113, und der kurze
 Lauf läuft in der CI.
 
+**Hinweis aus dem Review von Meilenstein 2:** Mit dem reinen Beutel (jede
+Position zweimal) sind nach spätestens 12 Segmenten alle sechs Positionen
+gezogen. Ziel 4 der Prüfliste in `balance.md` („erster Ring nach höchstens 12
+Platzierungen“) ist damit von selbst erfüllt und sagt hier nichts aus. Der
+Bericht weist den Messwert deshalb getrennt aus: mit und ohne Abwurf vor dem
+ersten geleerten Ring.
+
 **Übergangsverhalten:**
 - Die Simulation rechnet mit dem einfachen Beutel und ohne Bonus-Segmente.
 - Varianten lassen sich noch nicht nebeneinander auswerten.
@@ -269,6 +286,11 @@ anhand von Simulation und eigenem Spiel entschieden.
 **Abschlusskriterium:** Die Generator-Tests sind grün, der Variantenvergleich
 liegt vor, der `balance-reviewer` hat die Messwerte bewertet, und die
 entschiedenen Werte stehen in `balance.md` und in der Konfiguration.
+
+**Hinweis aus dem Review von Meilenstein 2:** Ziel 4 der Prüfliste („erster
+Ring nach höchstens 12 Platzierungen, aber nicht immer nach genau 6“) wird erst
+mit dem Generator aus diesem Meilenstein bewertet, nicht mit dem Messwert des
+reinen Beutels aus Meilenstein 6.
 
 **Übergangsverhalten:**
 - Es gibt noch keine Bonus-Segmente. Ziele der Prüfliste, die vom Joker
@@ -346,6 +368,22 @@ Festlegen der Fugenbreite prüfen, ob der Glow nur am Außenrand des Rings liege
 soll und ob `grafik-audio.md` einen Grenzwert braucht (Mindestbreite bei 360
 CSS-Pixeln, frei von Glow). Falls ja, kommt er als Zeile in Abschnitt 3 und als
 Test aus der Geometrie.
+
+**Hinweise aus dem Review von Meilenstein 2:**
+- Das Segment in der Mitte ist das kleinste auf dem Feld: `CENTER_RADIUS` 0,13
+  gegen `RING_RADIUS` 0,165, also 79 % eines gelegten Keils, bei gleicher
+  Helligkeit. Auf einem fast vollen Feld hebt es nichts hervor (Prüfliste in
+  `grafik-audio.md`: Das aktuelle Segment zieht den Blick zuerst an).
+- Die Symbole in der Mitte liegen bei 360 CSS-Pixeln teils unter 14 Pixeln
+  (Dreieck 13,9, Quadrat 12,7). Der Test für die Mindestgrößen legt fest, was
+  gemessen wird (Begrenzungsbox oder kleinste Ausdehnung), und prüft auch das
+  verkleinerte Symbol in der Mitte.
+- Die Symbole wiegen optisch verschieden: Die Fläche des Kreises ist etwa
+  doppelt so groß wie die von Dreieck, Raute und Balken.
+- Seitenrand: Die Ringe bei 2, 4, 8 und 10 Uhr reichen bis 0,479 der Feldbreite
+  von der Mitte. Bei 375 CSS-Pixeln bleiben etwa 8 Pixel Rand, beim Wackeln
+  nach einem Fehltipp etwa 2. Bei den Proportionen prüfen, auch auf Geräten mit
+  gebogenen Displaykanten.
 
 **Übergangsverhalten:**
 - Animationen fehlen noch: Segmente springen an ihren Platz, Rückmeldungen
