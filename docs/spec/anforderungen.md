@@ -171,16 +171,17 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
 ## 10. Bonus-System und Joker
 
 - **A51** Bonus-Segmente sind eigene Segment-Arten mit eigener Tipp-Regel. Alle
-  Arten teilen sich die Auslöser (A52) und die gemeinsamen Regeln (A53).
-- **A52** Bonus-Segmente erscheinen nicht von selbst und kommen aus demselben
-  Generator wie die normalen Segmente (Mischung aus Beutel und Chance, A32).
-  Ereignisse erhöhen die Chance, dass das nächste Segment ein Bonus ist.
-  Erscheint ein Bonus, fällt die Chance auf ihren Grundwert. Der Generator
-  behandelt ein Bonus-Segment wie ein normales Segment: Es entsteht aus einer
-  normalen Ziehung und verbraucht deren Position aus dem Beutel, auch wenn der
-  Joker diese Position nicht nutzt. Vorläufige
-  Startwerte: Grundwert 0 %, einfarbiger Ring +10 Prozentpunkte, Leerung mit
-  Combo ab 3 +5 Prozentpunkte, Obergrenze 30 %. Welche Ereignisse welche
+  Arten nutzen dasselbe Bonus-System (A52) und die gemeinsamen Regeln (A53).
+- **A52** Bonus-Segmente kommen aus demselben Generator wie die normalen
+  Segmente (Mischung aus Beutel und Chance, A32). Jedes Segment ist mit einer
+  Chance ein Bonus. Diese Chance hat einen Grundwert über 0 %, ein Bonus kann
+  also auch ohne Auslöser erscheinen. Ereignisse im Spiel (Auslöser) erhöhen
+  die Chance. Erscheint ein Bonus, fällt sie auf den Grundwert zurück. Der
+  Generator behandelt ein Bonus-Segment wie ein normales Segment: Es entsteht
+  aus einer normalen Ziehung und verbraucht deren Position aus dem Beutel, auch
+  wenn der Joker diese Position nicht nutzt. Vorläufige Startwerte: Grundwert
+  2 %, einfarbiger Ring +10 Prozentpunkte, Leerung mit Combo ab 3 +5
+  Prozentpunkte, Obergrenze 30 %. Welche Ereignisse welche
   Bonus-Art auslösen und wie Beutel und Chance dabei zusammenwirken, wird je
   Bonus-Art festgelegt: für den Joker in Meilenstein 8, für den Aufräumer in
   Meilenstein 16.
@@ -479,7 +480,8 @@ Entschieden im Interview am 2026-11-12:
   verbraucht und bringt nur die Platzierungspunkte (A59, A60). Das Konzept ließ
   beides offen.
 - **Bonus-Auslöser:** werden je Bonus-Art festgelegt, nicht einmal für alle
-  (A52).
+  (A52). Bonus-Segmente können mit einer kleinen Grundchance auch ohne Auslöser
+  erscheinen. Das Konzept sah sie nur nach einem Auslöser vor.
 - **Ring nur aus Jokern:** eigener Bonus (A56). Im Konzept nicht vorgesehen.
   Begründung: Wer das schafft, hat Respekt verdient.
 - **Tutorial:** über „How to play“ wiederholbar (A77). Im Konzept nur einmal.

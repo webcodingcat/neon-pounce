@@ -48,7 +48,7 @@ Meilenstein Werte ändert.
 | ab 13 | 28 | je Stufe −0,05 bis 1,8 | 6 | 3,75 |
 
 Weitere Startwerte: Strafstaffel 0,5 / 1 / 2 / 4 s. 3 Leben. Abwürfe 3 am
-Start, höchstens 5. Beutel mit jeder Position zweimal. Bonus: Grundwert 0 %,
+Start, höchstens 5. Beutel mit jeder Position zweimal. Bonus: Grundwert 2 %,
 einfarbiger Ring +10, Combo ab 3 +5, Obergrenze 30 %. Einfarbig-Faktor 3,
 Joker-Ring-Faktor 10, Combo-Faktor höchstens 6. Bots: Geübte 0,8 s und 2 %,
 Anfänger 1,6 s und 8 %.
