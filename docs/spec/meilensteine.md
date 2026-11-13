@@ -93,7 +93,7 @@ und eine Partie lässt sich am Handy beliebig lang spielen.
 
 ## Meilenstein 3: Zeitdruck und Game Over
 
-**Status:** offen
+**Status:** erledigt am 2026-11-13 (Commit d3aa341)
 
 **Ziel:** Die kleinste vollständige Partie: Timer, Leben, Game Over und „Again“,
 öffentlich erreichbar und bereit für den Kurztest.
@@ -118,45 +118,45 @@ Entwicklungsserver. Stufe 2 ist erst nach Merge und Push prüfbar.
 - Es gibt keine Pause. Ein App-Wechsel hält die Partie nicht an.
 
 **Abnahme-Checkliste, Stufe 1:**
-- [ ] App öffnen und warten: Das erste Segment bleibt ohne Timer liegen, bis du
+- [x] App öffnen und warten: Das erste Segment bleibt ohne Timer liegen, bis du
       es legst.
-- [ ] Erstes Segment wegwischen: Es rutscht ein Stück in Wischrichtung und
+- [x] Erstes Segment wegwischen: Es rutscht ein Stück in Wischrichtung und
       federt zurück, der Vorrat bleibt gleich.
-- [ ] Zweites Segment liegen lassen: Der Bogen läuft ab, ein Leben erlischt, das
+- [x] Zweites Segment liegen lassen: Der Bogen läuft ab, ein Leben erlischt, das
       nächste Segment erscheint sofort.
-- [ ] Fehltipp: Der Bogen springt sichtbar um ein Stück zurück. Zweiter Fehltipp
+- [x] Fehltipp: Der Bogen springt sichtbar um ein Stück zurück. Zweiter Fehltipp
       auf dasselbe Segment: Der Sprung ist größer.
-- [ ] Sofort nach dem Legen blind noch einmal tippen: Der zweite Tipp legt das
+- [x] Sofort nach dem Legen blind noch einmal tippen: Der zweite Tipp legt das
       neue Segment nicht.
-- [ ] Alle Abwürfe verbrauchen: Das Symbol im HUD wechselt auf „Aufgeben“. Dann
+- [x] Alle Abwürfe verbrauchen: Das Symbol im HUD wechselt auf „Aufgeben“. Dann
       wischen: Ein Leben erlischt.
-- [ ] Eine Position in allen sechs Ringen belegen und den Timer ablaufen lassen:
+- [x] Eine Position in allen sechs Ringen belegen und den Timer ablaufen lassen:
       Die sechs belegten Plätze leuchten auf.
-- [ ] Drittes Leben verlieren: Das Feld blendet in etwa einer Sekunde aus, dann
+- [x] Drittes Leben verlieren: Das Feld blendet in etwa einer Sekunde aus, dann
       erscheint Game Over mit den Punkten.
-- [ ] Im Game Over sofort hektisch tippen: „Again“ löst in der ersten halben
+- [x] Im Game Over sofort hektisch tippen: „Again“ löst in der ersten halben
       Sekunde nicht aus. Danach „Again“: Eine neue Partie beginnt.
-- [ ] Im Game Over „Export“ antippen: Das Teilen-Menü oder ein Download bietet
+- [x] Im Game Over „Export“ antippen: Das Teilen-Menü oder ein Download bietet
       eine JSON-Datei an. Sie enthält je Segment Entscheidungszeit und
       Fehltipps.
-- [ ] Zwei Partien am Stück spielen: Das Spiel fühlt sich unter Zeitdruck
+- [x] Zwei Partien am Stück spielen: Das Spiel fühlt sich unter Zeitdruck
       flüssig an, der Timer ist ohne Hinsehen aus dem Augenwinkel lesbar.
-- [ ] Kurztest, erster Durchgang (3 Farben, 4 s, Beutel mit jeder Position
+- [x] Kurztest, erster Durchgang (3 Farben, 4 s, Beutel mit jeder Position
       zweimal): Ein oder zwei Freunde spielen etwa fünf Minuten nach einem Satz
       Erklärung. Notieren: Verstehen sie, dass die Position feststeht und sie
       nur den Ring wählen?
-- [ ] Kurztest, zweiter Durchgang (in `src/config.ts` 5 Farben und 2,5 s
+- [x] Kurztest, zweiter Durchgang (in `src/config.ts` 5 Farben und 2,5 s
       einstellen): Die Partie endet sicher im Game Over. Notieren: Drücken sie
       „Again“ ohne Aufforderung?
-- [ ] Eigene Partie mit 6 Farben und 2 s spielen und exportieren: Die Datei
+- [x] Eigene Partie mit 6 Farben und 2 s spielen und exportieren: Die Datei
       liegt für den Abgleich der Bot-Werte bereit.
 
 **Abnahme-Checkliste, Stufe 2 (nach Merge und Push):**
-- [ ] `https://webcodingcat.github.io/neon-pounce/` auf dem Handy öffnen: Das
+- [x] `https://webcodingcat.github.io/neon-pounce/` auf dem Handy öffnen: Das
       Spiel lädt und ist spielbar.
-- [ ] Dort eine Partie bis zum Game Over spielen: Es gibt keine
+- [x] Dort eine Partie bis zum Game Over spielen: Es gibt keine
       Bildraten-Anzeige und kein „Export“.
-- [ ] Das Repo auf GitHub öffnen: Das README nennt den Link zum Spiel.
+- [x] Das Repo auf GitHub öffnen: Das README nennt den Link zum Spiel.
 
 ## Meilenstein 4: Asset-Kette und Probe-Assets
 
