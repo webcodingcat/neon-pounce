@@ -38,6 +38,35 @@ export const MAX_DISCARDS = 5;
  */
 export const COLOR_COUNT = 3;
 
+/** Lives at the start of a game. Lives never come back (A22). */
+export const START_LIVES = 3;
+
+/** Last level on which a blockade is shown after a timeout or a give-up (A30). */
+export const BLOCKADE_HELP_LAST_LEVEL = 4;
+
+// --- Timer ---
+
+/**
+ * Full time of a segment in milliseconds. Fixed until milestone 5 introduces
+ * the levels, which then set the time per level (A37).
+ */
+export const TIMER_MS = 4000;
+
+/**
+ * Time a miss costs, by the number of misses on the same segment. Further
+ * misses cost the last value (A20).
+ */
+export const MISS_PENALTIES_MS: readonly number[] = [500, 1000, 2000, 4000];
+
+/** A tap on a ring this soon after a segment appeared is dropped (A9). */
+export const DOUBLE_TAP_MS = 100;
+
+/** How long the field fades out before Game Over appears (A23). */
+export const GAME_OVER_FADE_MS = 1000;
+
+/** The buttons of Game Over react only after this time (A82). */
+export const GAME_OVER_LOCK_MS = 500;
+
 // --- Scoring ---
 
 /** Points for a placement, before the level multiplier (A44). */

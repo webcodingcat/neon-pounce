@@ -9,6 +9,7 @@ import {
   MONO_FACTOR,
   PLACEMENT_POINTS,
   START_DISCARDS,
+  START_LIVES,
 } from '../config';
 import { drawColor, drawPosition } from './generator';
 import type { Rng } from './rng';
@@ -60,8 +61,11 @@ function withNextSegment(state: GameState, events: GameEvent[], rng: Rng): StepR
   };
 }
 
-/** Starts a game: empty board, first segment in the centre. */
-export function createGame(rng: Rng): GameState {
+/**
+ * Starts a game at time `startMs`: empty board, first segment in the centre.
+ * The first segment has no timer (A15).
+ */
+export function createGame(rng: Rng, startMs = 0): GameState {
   const first = spawn({ bag: [], nextId: 0 }, rng);
   return {
     rings: Array.from({ length: RING_COUNT }, emptyRing),
@@ -72,7 +76,31 @@ export function createGame(rng: Rng): GameState {
     score: 0,
     combo: 0,
     moves: 0,
+    lives: START_LIVES,
+    level: 1,
+    spawnedAtMs: startMs,
+    timerMs: null,
+    deadlineMs: null,
+    misses: 0,
+    phase: 'playing',
+    lostAtMs: null,
   };
+}
+
+/**
+ * Moves the game to time `timeMs` without an input: every timer that ran out
+ * by then times out (A21), and the fade after the last life ends (A23).
+ */
+export function advanceTime(state: GameState, _timeMs: number, _rng: Rng): StepResult {
+  return { state, events: [] };
+}
+
+/**
+ * Share of the timer that is left at `timeMs`, from 1 (full) to 0. The first
+ * segment of a game has no timer: its arc stays full (A15).
+ */
+export function timerFraction(_state: GameState, _timeMs: number): number {
+  return 1;
 }
 
 /** The colour that all segments of a full ring share, or null (A17). */

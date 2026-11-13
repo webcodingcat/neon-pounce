@@ -33,7 +33,28 @@ export interface GameState {
   readonly combo: number;
   /** Placements so far. Only placements count as moves (A12). */
   readonly moves: number;
+  /** Lives left (A22). */
+  readonly lives: number;
+  /** Level, from 1. There is only level 1 until milestone 5. */
+  readonly level: number;
+  /** Time at which the current segment appeared (A9). */
+  readonly spawnedAtMs: number;
+  /** Full time of the current segment. Null for the first segment of a game (A15). */
+  readonly timerMs: number | null;
+  /** Time at which the timer of the current segment reaches 0, or null (A15, A19). */
+  readonly deadlineMs: number | null;
+  /** Misses on the current segment so far (A20). */
+  readonly misses: number;
+  /**
+   * `fading` from the loss of the last life until Game Over appears, then
+   * `over` (A23). The board only reacts while `playing` (A10).
+   */
+  readonly phase: GamePhase;
+  /** Time at which the last life was lost, or null. */
+  readonly lostAtMs: number | null;
 }
+
+export type GamePhase = 'playing' | 'fading' | 'over';
 
 /** An input of the player. Every input carries its time. */
 export type GameInput =
@@ -63,7 +84,26 @@ export type GameEvent =
       readonly discardReturned: boolean;
     }
   | { readonly type: 'discarded'; readonly segment: Segment }
-  | { readonly type: 'spawned'; readonly segment: Segment };
+  | { readonly type: 'spawned'; readonly segment: Segment }
+  /** A swipe on the first segment of a game: it stays (A15). */
+  | { readonly type: 'bounced'; readonly segment: Segment }
+  | {
+      /** The timer reached 0 (A21). */
+      readonly type: 'timedOut';
+      readonly segment: Segment;
+      /** Moment of the timeout. It can lie before the time of the step. */
+      readonly timeMs: number;
+      /** The six taken slots of the position light up (A30). */
+      readonly showBlockade: boolean;
+    }
+  | {
+      /** A swipe without a discard in stock (A27). */
+      readonly type: 'gaveUp';
+      readonly segment: Segment;
+      readonly showBlockade: boolean;
+    }
+  /** The fade after the last life is over: Game Over appears (A23). */
+  | { readonly type: 'gameOver' };
 
 export interface StepResult {
   readonly state: GameState;
