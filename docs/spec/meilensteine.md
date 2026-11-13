@@ -12,10 +12,10 @@ Look und Klang, 12 bis 15 Bildschirme, 16 Aufräumer.
 
 ## Meilenstein 1: Leistungsprobe
 
-**Status:** gemergt am 2026-11-13 (Commit 76adf60), Abnahme auf Android-Handy
-und iPad steht aus
+**Status:** erledigt am 2026-11-13 (Commit 76adf60)
 
 **Messwerte:** iPhone 17 nach fünf Minuten: Mittel 60, schlechteste Sekunde 59.
+Android-Handy und iPad wurden nicht geprüft und sind zurückgestellt.
 
 **Ziel:** Beweisen, dass PixiJS ein volles, leuchtendes Feld auf echten Handys
 mit 60 Bildern pro Sekunde zeichnet, bevor irgendetwas darauf aufbaut.
