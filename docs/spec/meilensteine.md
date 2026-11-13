@@ -136,8 +136,9 @@ Entwicklungsserver. Stufe 2 ist erst nach Merge und Push prüfbar.
       erscheint Game Over mit den Punkten.
 - [ ] Im Game Over sofort hektisch tippen: „Again“ löst in der ersten halben
       Sekunde nicht aus. Danach „Again“: Eine neue Partie beginnt.
-- [ ] Im Game Over „Export“ antippen: Das Teilen-Menü bietet eine JSON-Datei an.
-      Sie enthält je Segment Entscheidungszeit und Fehltipps.
+- [ ] Im Game Over „Export“ antippen: Das Teilen-Menü oder ein Download bietet
+      eine JSON-Datei an. Sie enthält je Segment Entscheidungszeit und
+      Fehltipps.
 - [ ] Zwei Partien am Stück spielen: Das Spiel fühlt sich unter Zeitdruck
       flüssig an, der Timer ist ohne Hinsehen aus dem Augenwinkel lesbar.
 - [ ] Kurztest, erster Durchgang (3 Farben, 4 s, Beutel mit jeder Position

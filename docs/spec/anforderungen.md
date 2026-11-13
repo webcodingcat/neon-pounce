@@ -45,7 +45,9 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
   der Wisch. Ein Tipp auf die Mitte, der sie nicht verlässt, tut nichts.
 - **A9** Schutz vor Doppeltipps: Ein Tipp auf einen Ring, der vor dem Erscheinen
   des aktuellen Segments oder in den ersten 100 ms danach beginnt, wird ohne
-  Rückmeldung verworfen. Für den Wisch gilt dieser Schutz nicht.
+  Rückmeldung verworfen. Für den Wisch gilt dieser Schutz nicht. Er gilt auch
+  für das erste Segment, ab dem Start der Partie. Ein verworfener Tipp auf
+  einen belegten Platz ist kein Fehltipp und kostet keine Strafzeit.
 - **A10** Eine Eingabe zählt nur in dem Zustand, in dem sie begonnen hat. Während
   des Ausblendens vor Game Over (A23), in der Pause und im Countdown werden
   Eingaben auf dem Feld ignoriert.
@@ -61,12 +63,14 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
 - **A13** Ist der Platz belegt, ist das ein Fehltipp: Das Segment bleibt in der
   Mitte, und der Timer verliert Strafzeit (A20).
 - **A14** Nach jeder Platzierung, jedem Abwurf und jedem Timeout erscheint sofort
-  das nächste Segment, ohne Pause.
+  das nächste Segment, ohne Pause. Ausnahme: Nach dem Verlust des letzten
+  Lebens erscheint keines mehr (A23).
 - **A15** Das erste Segment einer Partie ist immer ein normales Segment, hat
   keinen Timer und wartet unbegrenzt. Es kann nicht abgeworfen werden: Bei einem
   Wisch rutscht es ein Stück in Wischrichtung und federt zurück, damit der
-  Wisch nicht wirkungslos erscheint. Mit seiner Platzierung beginnt die Partie. Ein Fehltipp ist hier nicht möglich,
-  weil das Feld leer ist.
+  Wisch nicht wirkungslos erscheint. Das gilt auch bei leerem Vorrat und kostet
+  dann kein Leben. Mit seiner Platzierung beginnt die Partie. Ein Fehltipp ist
+  hier nicht möglich, weil das Feld leer ist.
 
 ## 4. Ringe leeren
 
@@ -82,20 +86,28 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
 ## 5. Timer und Leben
 
 - **A19** Jedes Segment außer dem ersten (A15) hat einen eigenen Timer mit der
-  vollen Zeit seiner Stufe (A37).
+  vollen Zeit seiner Stufe (A37). Der Timer beginnt in dem Moment, in dem das
+  Segment erscheint.
 - **A20** Die Strafzeit steigt mit jedem Fehltipp auf dasselbe Segment:
   0,5 / 1 / 2 / 4 s (Startwerte), ab dem fünften Fehltipp weiter 4 s. Mit dem
   nächsten Segment beginnt sie wieder beim ersten Wert. Die Staffel ist auf
   allen Stufen gleich.
 - **A21** Erreicht der Timer 0, auch durch eine Strafzeit, folgt sofort der
   Timeout: Ein Leben geht verloren, das Segment verfällt, die Combo wird
-  zurückgesetzt.
+  zurückgesetzt. Verbraucht eine Strafzeit genau die Restzeit, ist das ein
+  Timeout. Das Spiel bemerkt den Timeout mit dem nächsten Bild oder der
+  nächsten Eingabe. Das Folgesegment erscheint in diesem Moment mit voller
+  Zeit, je Schritt verfällt also höchstens ein Segment (nach einem App-Wechsel
+  ohne Pause genau eines). Ein Tipp, der erst nach Ablauf des Timers eintrifft,
+  legt nichts: Er löst den Timeout aus und fällt in das Doppeltipp-Fenster des
+  neuen Segments (A9).
 - **A22** Eine Partie beginnt mit 3 Leben. Leben kommen nie zurück.
 - **A23** Bei 0 Leben reagiert das Feld nicht mehr und blendet in 1 s
   gleichmäßig ins Dunkle aus. Danach erscheint Game Over. Die Rückmeldung des
   auslösenden Ereignisses (Timeout, Aufgabe, Blockade-Hilfe) spielt dabei
   vollständig und beginnt gleichzeitig mit dem Ausblenden, damit der Spieler
-  sieht, warum er verloren hat. Der Klang `timeout` spielt einmal.
+  sieht, warum er verloren hat. Der Klang `timeout` spielt einmal. Die Mitte
+  bleibt während des Ausblendens leer, und das HUD blendet mit dem Feld aus.
 - **A24** Fehltipps kosten nie Punkte. Der Timer ist die einzige Strafe.
 
 ## 6. Abwürfe und Blockaden
@@ -310,7 +322,8 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
   (A95), erreichte Stufe, Zahl der einfarbigen Ringe und längste Combo. Dazu
   „Again“ (sofort neue Partie) und „Menu“.
 - **A82** Die Schaltflächen im Game Over reagieren erst 500 ms nach dem
-  Erscheinen.
+  Erscheinen. Die Zeit zählt ab dem Moment, in dem Game Over sichtbar wird
+  (nach dem Ausblenden aus A23), nicht ab dem Verlust des letzten Lebens.
 - **A83** Der Ablauf folgt dieser Tabelle. Andere Übergänge gibt es nicht. Eine
   Zurück-Taste oder -Geste wird nirgends behandelt. Menüs haben keine
   Vorauswahl.
@@ -439,12 +452,20 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
   belegt ist (0 bis 6, 6 ist eine Blockade), und den Abwurf-Vorrat. Dazu einmal
   je Partie Startwert,
   Konfiguration und Endstand. „Export“ gibt das als JSON-Datei an das
-  Teilen-Menü des Geräts, auf dem Desktop als Download.
+  Teilen-Menü des Geräts, auf dem Desktop als Download. Das Teilen-Menü gibt
+  es nur über HTTPS: Über den Entwicklungsserver im WLAN wird die Datei auch
+  auf dem Handy heruntergeladen. Die laufende Nummer beginnt bei 1. Das
+  Segment, das beim Ende der Partie noch in der Mitte liegt, steht nicht im
+  Protokoll. Die Datei heißt `neon-pounce-<Startwert>.json`.
 - **A110** Testmodus: Mit dem Adresszusatz `?test=<Startwert>` nutzt die App
   diesen Startwert für den Zufall und legt unter `window.__neonPounce` den
   Spielstand lesbar offen (Bildschirm, Ringe, aktuelles Segment, Leben, Abwürfe,
   Punkte, Combo, Stufe) sowie eine Funktion, die die Spielzeit um eine
-  Millisekundenzahl vorstellt. Ohne den Zusatz gibt es das Objekt nicht.
+  Millisekundenzahl vorstellt. Ohne den Zusatz gibt es das Objekt nicht. Ein
+  Startwert ist eine ganze Zahl ab 0, jeder andere Wert schaltet den Testmodus
+  nicht ein. Die Uhr läuft auch im Testmodus normal weiter, die Funktion
+  stellt sie zusätzlich vor. Den Testmodus gibt es auch im gebauten Stand, weil
+  die Rauchtests gegen ihn laufen.
 
 ## 20. Simulation
 
