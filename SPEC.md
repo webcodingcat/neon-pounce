@@ -186,8 +186,9 @@ schwer für das Projekt, weil es genau eine Abhängigkeit für genau die Aufgabe
 ist, die ohne Bibliothek am meisten Eigenbau kosten würde.
 
 **Verworfen:**
-- Canvas 2D ohne Bibliothek: reicht für Etappe 1, aber `shadowBlur` ist auf
-  Handys langsam. Für Etappe 3 müssten Glow und Partikel selbst gebaut werden.
+- Canvas 2D ohne Bibliothek: reicht für die Meilensteine 1 bis 3, aber
+  `shadowBlur` ist auf Handys langsam. Für die Meilensteine 9 und 10 müssten
+  Glow und Partikel selbst gebaut werden.
 - Phaser 4.2: komplette Engine von etwa 1 MB, von der das meiste nicht gebraucht
   wird. Sie will die Spielschleife besitzen und erschwert damit die Trennung von
   Regeln und Darstellung.
@@ -203,7 +204,7 @@ Darstellung:
 3. Formen werden einmal gebaut und danach nur bewegt, nicht in jedem Bild neu
    gezeichnet.
 
-Ob das reicht, klärt die Leistungsprobe in Etappe 1 (siehe Abschnitt 7).
+Ob das reicht, klärt die Leistungsprobe in Meilenstein 1 (siehe Abschnitt 7).
 
 **Ton – Begründung:** Die steigende Tonhöhe beim Platzieren und die Halbtöne je
 Combo-Stufe brauchen die Web Audio API ohnehin. Eine Bibliothek darüber bringt
@@ -211,9 +212,9 @@ für wenige Klänge und ein Musikstück nichts. Howler wurde verworfen, weil das
 letzte Release (2.2.4) alt ist.
 
 **Kosten einer späteren Änderung:** Ein Wechsel des Renderers bleibt auf die
-Darstellungsschicht begrenzt, solange die Regeln getrennt sind. Nach Etappe 3
-wäre er trotzdem teuer, weil dann Animationen und Effekte daran hängen. Deshalb
-fällt die Prüfung in Etappe 1.
+Darstellungsschicht begrenzt, solange die Regeln getrennt sind. Nach
+Meilenstein 10 wäre er trotzdem teuer, weil dann Animationen und Effekte daran
+hängen. Deshalb fällt die Prüfung in Meilenstein 1.
 
 ### 6.3 Toolchain
 
@@ -248,16 +249,16 @@ anderen Linter betrifft nur Konfiguration.
 - **CI:** GitHub Actions (für öffentliche Repos kostenlos).
   - Bei jedem Push: Linter, Typprüfung, Vitest, Build, Playwright-Rauchtests.
   - Bei jedem Push auf `main`: zusätzlich Deployment nach GitHub Pages.
-- **Branch-Strategie:** ein Branch pro Etappe, der nach der Abnahme mit
+- **Branch-Strategie:** ein Branch pro Meilenstein, der nach der Abnahme mit
   `--ff-only` nach `main` zusammengeführt wird.
 - **Namensschema:** `m<N>-<kurzer-name>`, zum Beispiel `m1-playable-core`. Diese
   Zeile ist die einzige Quelle für das Schema.
 
 **Begründung:** `main` enthält nur abgenommene Stände, und genau die sehen
-Freunde unter dem Link. Eine gescheiterte Etappe lässt sich verwerfen.
+Freunde unter dem Link. Ein gescheiterter Meilenstein lässt sich verwerfen.
 
 **Folge:** Ein unfertiger Stand ist nicht unter der öffentlichen Adresse
-erreichbar. Tests vor der Abnahme (auch der Kurztest in Etappe 1) laufen über
+erreichbar. Tests vor der Abnahme (auch der Kurztest in Meilenstein 3) laufen über
 den Entwicklungsserver im WLAN oder auf dem eigenen Handy.
 
 **Verworfen:** direkt auf `main`. Jeder Push wäre sofort unter dem Link
@@ -273,7 +274,7 @@ testbar, aber Freunde könnten einen kaputten Zwischenstand erwischen.
   (siehe Abschnitt 7).
 - **Dokumentation**, beide Dateien auf Englisch:
   - `README.md` für Anwender: was das Spiel ist, Link zum Spielen, Installation
-    auf dem Handy, Lizenz. Ab Etappe 3 mit Screenshot oder kurzer Animation.
+    auf dem Handy, Lizenz. Ab Meilenstein 9 mit Screenshot oder kurzer Animation.
   - `docs/DEVELOPMENT.md` für Entwickler: Voraussetzungen, Befehle, Tests,
     Simulation, Struktur, Workflow, Asset-Erzeugung.
 
@@ -450,8 +451,8 @@ nicht wiederholt.
 
 ## 11. Aufgesetzter Stack
 
-Aufgesetzt am 2026-11-12 mit `setup-stack`. Das Grundgerüst steht damit: Etappe 1
-beginnt direkt mit dem Spiel und muss kein Projekt mehr anlegen.
+Aufgesetzt am 2026-11-12 mit `setup-stack`. Das Grundgerüst steht damit:
+Meilenstein 1 beginnt direkt mit dem Spiel und muss kein Projekt mehr anlegen.
 
 **Installierte Versionen** (exakt festgeschrieben in `package.json`):
 
@@ -481,7 +482,7 @@ Callbacks. Funktionslänge und Callback-Tiefe gelten nicht in Testdateien.
 **Stop-Hook:** `.claude/hooks/stop-checks.sh` läuft in Git Bash, sobald Claude
 aufhören will, mit einem Zeitlimit von 180 Sekunden. Er führt Typprüfung, Linter
 und Unit-Tests aus und hindert Claude bei einem Fehler am Aufhören. Solange die
-Datei `.claude/.tests-first` existiert (Test-zuerst-Phase einer Etappe),
+Datei `.claude/.tests-first` existiert (Test-zuerst-Phase eines Meilensteins),
 überspringt er die Unit-Tests. Typprüfung und Linter laufen weiter. Build und
 Rauchtests sind nicht Teil des Hooks.
 
@@ -494,10 +495,10 @@ Rauchtests sind nicht Teil des Hooks.
   und das spätere Simulationsskript.
 - Die CI (`.github/workflows/ci.yml`) führt bei jedem Push Linter, Typprüfung,
   Vitest, Build und die Rauchtests aus. Das Deployment nach GitHub Pages fehlt
-  noch und kommt in Etappe 1, damit keine leere Seite unter dem Link steht.
+  noch und kommt in Meilenstein 3, damit keine leere Seite unter dem Link steht.
 - Die `LICENSE` (MIT, Copyright WebCodingCat, Assets ausgenommen) liegt schon im
-  Repo. `README.md` und `docs/DEVELOPMENT.md` entstehen in Etappe 1.
-- Das Skript für README-Bilder entsteht in Etappe 3: `npm run screenshots` als
+  Repo. `README.md` und `docs/DEVELOPMENT.md` entstehen in Meilenstein 3.
+- Das Skript für README-Bilder entsteht in Meilenstein 9: `npm run screenshots` als
   eigener Playwright-Lauf mit festen Startwerten des Zufallsgenerators, der nach
   `docs/images/` schreibt, ohne neue Abhängigkeit und außerhalb des Stop-Hooks.
 - `npm audit` meldet 10 Befunde mittlerer Schwere, alle über `minimatch` in
