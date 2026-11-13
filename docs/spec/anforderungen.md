@@ -25,7 +25,10 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
 - **A4** Das Feld ist ein zentriertes Hochformat-Feld. Es skaliert auf den
   verfügbaren Platz, hält die sicheren Bereiche des Geräts frei (Notch,
   Home-Leiste) und wird höchstens 520 CSS-Pixel breit. Auf dem iPad gibt es kein
-  eigenes Layout.
+  eigenes Layout. Das Feld nimmt die ganze Höhe zwischen den sicheren Bereichen
+  ein. Seine Breite ist das Minimum aus der verfügbaren Breite, 520 CSS-Pixeln
+  und der Höhe geteilt durch 1,6 (Startwert), damit es immer ein Hochformat
+  bleibt.
 - **A5** Ein Segment hat eine Position (0 bis 5) und eine Farbe (eine von bis zu
   sechs), oder es ist ein Bonus-Segment (Abschnitt 10 und 11). Jede Farbe hat ein
   festes Symbol, das auf dem Segment zu sehen ist.
@@ -417,7 +420,13 @@ Verhalten gegen die Konstanten, nicht gegen die Zahl im Text.
   nicht.
 - **A107** Nur im Entwicklungsserver sichtbar: eine Bildraten-Anzeige (aktueller
   Wert, Mittel, schlechteste Sekunde) und im Game Over die Schaltfläche
-  „Export“.
+  „Export“. Die Sekunden zählen ab dem ersten Bild. Der aktuelle Wert ist die
+  Zahl der Bilder in der letzten vollen Sekunde, die schlechteste Sekunde das
+  Minimum über alle vollen Sekunden (eine Sekunde ohne Bild zählt als 0), das
+  Mittel sind Bilder durch Laufzeit. Zeit, in der die Seite verdeckt war
+  (App-Wechsel, Bildschirmsperre), wird verworfen. In der Leistungsprobe (A108)
+  zeigt die Anzeige zusätzlich die Laufzeit und hält nach fünf Minuten Mittel
+  und schlechteste Sekunde mit ✓ oder ✗ fest (Grenzwerte als Konstanten).
 - **A108** Leistungsprobe: Ein Schalter in der Konfiguration ersetzt die Partie
   durch ein volles Feld mit 36 leuchtenden Segmenten, die dauerhaft animiert
   sind, und einem ständigen Partikelstrom.

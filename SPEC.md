@@ -461,6 +461,7 @@ beginnt direkt mit dem Spiel und muss kein Projekt mehr anlegen.
 | npm | 11.20.0 |
 | TypeScript | 6.0.3 |
 | Vite | 8.3.8 |
+| PixiJS (`pixi.js`) | 8.23.0, seit Meilenstein 1 |
 | Vitest | 5.1.0 |
 | Playwright (`@playwright/test`) | 1.65.0, mit Chromium und WebKit |
 | ESLint | 10.14.0, dazu `@eslint/js` 10.0.1 |
@@ -486,8 +487,8 @@ Rauchtests sind nicht Teil des Hooks.
 
 **Abweichungen und Ergänzungen zur Spec:**
 
-- PixiJS 8.23 ist noch nicht installiert. Es kommt in Etappe 1 mit dem ersten
-  Code, der es benutzt. Ebenso `vite-plugin-pwa` in Etappe 4 (wie geplant).
+- PixiJS ist seit Meilenstein 1 installiert (siehe Tabelle). `vite-plugin-pwa`
+  ist noch nicht installiert und kommt in Etappe 4 (wie geplant).
 - `@eslint/js` und `@types/node` standen nicht in Abschnitt 6. Das erste liefert
   das Basis-Regelset von ESLint, das zweite die Typen für Konfigurationsdateien
   und das spätere Simulationsskript.

@@ -26,7 +26,10 @@ Die A-Nummern verweisen auf `anforderungen.md`.
 
 | Anforderungen | Was der Test festlegt |
 |---|---|
-| A1, A2 | Geometrie als reine Funktion: Mittelpunkte der Ringe und Winkel der Plätze für eine gegebene Feldgröße |
+| A1 bis A3 | Geometrie als reine Funktion: Mittelpunkte der Ringe, Winkel und Fugen der Plätze, Lage des Timer-Bogens für eine gegebene Feldgröße |
+| A4 | Feld als reine Funktion: Breite höchstens 520 CSS-Pixel, sichere Bereiche, Zentrierung, schmaleres Feld bei geringer Höhe |
+| A97 | Renderauflösung höchstens Faktor 2 |
+| A107 | Bildraten-Statistik als reine Funktion (aktueller Wert, Mittel, schlechteste Sekunde, verworfene Zeit, Grenzwerte der Leistungsprobe). Rauchtest: Im gebauten Stand gibt es keine Bildraten-Anzeige |
 | A6 bis A9 | Zuordnung Berührpunkt zu Ring, Reihenfolge mehrerer Finger, Wisch-Erkennung beim Verlassen der Mitte, Doppeltipp-Fenster an den Grenzen 99 und 100 ms |
 | A10 | Eingaben aus einem früheren Zustand werden verworfen |
 | A12 bis A15 | Platzierung, Fehltipp, sofortiges Folgesegment, erstes Segment ohne Timer und ohne Abwurf |
@@ -68,10 +71,11 @@ in `meilensteine.md`, jeweils mit Handlung und erwartetem Ergebnis:
 - Kurztest und Spieltest mit Freunden (SPEC.md, Offene Annahmen)
 - Abstimmung der Spielwerte (`balance.md`)
 
-Ohne Test bleiben außerdem: A4 (Skalierung, sichtbar auf den Geräten), A11
-(Maus, ausdrücklich ungetestet), A62 (noch offen), A96 (Zielsysteme, geprüft
-werden nur die Testgeräte), A101 (Update, nur von Hand prüfbar), A107 und A108
-(Entwicklungshilfen), A117 und A118 (Dokumentation, geprüft vom
+Ohne Test bleiben außerdem: A4 (Darstellung auf den Geräten; die Berechnung des
+Felds ist getestet), A11 (Maus, ausdrücklich ungetestet), A62 (noch offen), A96
+(Zielsysteme, geprüft werden nur die Testgeräte), A101 (Update, nur von Hand
+prüfbar), A107 (die Anzeige selbst und „Export“; die Statistik ist getestet),
+A108 (Leistungsprobe), A117 und A118 (Dokumentation, geprüft vom
 `docs-reviewer`).
 
 ## 5. Übergangsverhalten
@@ -111,7 +115,11 @@ Alle Werte, die nach Gefühl oder Simulation nachjustiert werden, stehen in
   Anfänger, Zahl der Partien je Lauf
 - **Rückmeldung:** Dauer der Vibrationen, Dauer der Animationen
 - **Ton:** Lautstärke von Effekten, Musik in der Partie und Musik im Menü
-- **Entwicklung:** Schalter für die Leistungsprobe
+- **Darstellung:** Obergrenze der Renderauflösung, größte Feldbreite, kleinstes
+  Seitenverhältnis des Felds, Proportionen des Bretts (Ringabstand, Ringradius,
+  Mitte, Timer-Bogen, Fuge; Platzhalter bis Meilenstein 9)
+- **Entwicklung:** Schalter für die Leistungsprobe, ihre Dauer und Grenzwerte,
+  Partikelzahl und Tempo der Probe
 
 Palette, Symbole und Effekt-Rezepte sind eigene Datendateien (siehe
 `grafik-audio.md`).
