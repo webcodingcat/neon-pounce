@@ -78,11 +78,12 @@ describe('protocol of a game (A109)', () => {
     const discarded = game.state.current;
     game.swipe(START_MS + 800);
     const lapsed = game.state.current;
-    // The timer of the third segment started with the discard. The step comes late.
+    // The timer of the third segment started with the discard. The step that
+    // notices the timeout comes 40 ms late, and the fourth segment appears then.
     game.advance(START_MS + 800 + TIMER_MS + 40);
     const givenUp = game.state.current;
     game.set({ discards: 0 });
-    game.swipe(START_MS + 800 + TIMER_MS + 650);
+    game.swipe(START_MS + 800 + TIMER_MS + 40 + 650);
     const [, second, third, fourth, ...rest] = game.finish().segments;
     expect(rest).toEqual([]);
     expect(second).toEqual({
@@ -100,7 +101,7 @@ describe('protocol of a game (A109)', () => {
     expect(third).toMatchObject({
       number: 3,
       position: lapsed.position,
-      decisionMs: TIMER_MS,
+      decisionMs: TIMER_MS + 40,
       outcome: 'timeout',
       ring: null,
     });

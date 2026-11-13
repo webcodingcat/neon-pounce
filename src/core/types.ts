@@ -91,8 +91,6 @@ export type GameEvent =
       /** The timer reached 0 (A21). */
       readonly type: 'timedOut';
       readonly segment: Segment;
-      /** Moment of the timeout. It can lie before the time of the step. */
-      readonly timeMs: number;
       /** The six taken slots of the position light up (A30). */
       readonly showBlockade: boolean;
     }

@@ -186,12 +186,7 @@ describe('timer (A19, A21, A24)', () => {
     expect(table.state).toEqual(before);
     const events = table.advance(before.deadlineMs ?? 0);
     expect(events).toEqual([
-      {
-        type: 'timedOut',
-        segment: before.current,
-        timeMs: before.deadlineMs,
-        showBlockade: false,
-      },
+      { type: 'timedOut', segment: before.current, showBlockade: false },
       { type: 'spawned', segment: table.state.current },
     ]);
     // The segment is gone, a life and the combo with it. Points stay (A24).
@@ -204,29 +199,33 @@ describe('timer (A19, A21, A24)', () => {
     expect(table.state.discards).toBe(before.discards);
   });
 
-  it('starts the timer of the next segment at the moment of the timeout, not of the step', () => {
+  it('starts the timer of the next segment at the moment it appears', () => {
     const table = startedTable();
-    const deadline = table.deadline;
-    table.advance(deadline + 250);
-    expect(table.state.spawnedAtMs).toBe(deadline);
-    expect(table.state.deadlineMs).toBe(deadline + TIMER_MS);
+    // The step that notices the timeout comes late.
+    const noticedAt = table.deadline + 250;
+    table.advance(noticedAt);
+    expect(table.state.spawnedAtMs).toBe(noticedAt);
+    expect(table.state.deadlineMs).toBe(noticedAt + TIMER_MS);
   });
 
-  it('lets an input that comes after the timer ran out meet the next segment', () => {
+  it('drops a tap that comes after the timer ran out', () => {
     const table = startedTable();
     const lapsed = table.state.current;
+    const before = table.state;
+    // The next segment appears with this tap, so the tap cannot be meant for it (A9).
     const events = table.tap(1, table.deadline + 500);
-    expect(eventTypes(events)).toEqual(['timedOut', 'spawned', 'placed', 'spawned']);
-    expect(events[2]).toMatchObject({ type: 'placed', ring: 1 });
-    expect(events[2]).not.toMatchObject({ segment: lapsed });
+    expect(eventTypes(events)).toEqual(['timedOut', 'spawned']);
+    expect(events[0]).toMatchObject({ segment: lapsed });
+    expect(table.state.rings).toEqual(before.rings);
     expect(table.state.lives).toBe(START_LIVES - 1);
   });
 
-  it('times out several segments in a row when that much time passed', () => {
+  it('times out only one segment per step, however much time passed', () => {
     const table = startedTable();
-    const events = table.advance(FIRST_PLACED_MS + 2 * TIMER_MS);
-    expect(eventTypes(events)).toEqual(['timedOut', 'spawned', 'timedOut', 'spawned']);
-    expect(table.state.lives).toBe(START_LIVES - 2);
+    const events = table.advance(FAR_MS);
+    expect(eventTypes(events)).toEqual(['timedOut', 'spawned']);
+    expect(table.state.lives).toBe(START_LIVES - 1);
+    expect(table.state.deadlineMs).toBe(FAR_MS + TIMER_MS);
   });
 });
 
@@ -266,7 +265,7 @@ describe('penalty for a miss (A13, A20, A21, A24)', () => {
     const tapAt = FIRST_PLACED_MS + 200;
     const events = table.tap(2, tapAt);
     expect(eventTypes(events)).toEqual(['missed', 'timedOut', 'spawned']);
-    expect(events[1]).toMatchObject({ segment: missed, timeMs: tapAt });
+    expect(events[1]).toMatchObject({ segment: missed });
     expect(table.state.lives).toBe(START_LIVES - 1);
     expect(table.state.spawnedAtMs).toBe(tapAt);
     expect(table.state.deadlineMs).toBe(tapAt + TIMER_MS);
@@ -423,14 +422,6 @@ describe('lives and the end of a game (A22, A23, A10)', () => {
     expect(table.advance(lostAt + GAME_OVER_FADE_MS)).toEqual([{ type: 'gameOver' }]);
     expect(table.state.phase).toBe('over');
     expect(table.advance(FAR_MS)).toEqual([]);
-    expect(table.state.phase).toBe('over');
-  });
-
-  it('reaches Game Over in one step when enough time passed', () => {
-    const table = startedTable();
-    const events = table.advance(FAR_MS);
-    expect(eventTypes(events).filter((type) => type === 'timedOut')).toHaveLength(START_LIVES);
-    expect(events.at(-1)).toEqual({ type: 'gameOver' });
     expect(table.state.phase).toBe('over');
   });
 
