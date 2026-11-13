@@ -167,14 +167,15 @@ export class BoardView {
     const outline = glowSprite(this.textures.ringOutline, ORIGIN, this.textures.resolution);
     outline.tint = FRAME_TINT;
     outline.alpha = OUTLINE_ALPHA;
-    container.addChild(outline);
-    const slots = Array.from({ length: SLOT_COUNT }, (_, position) =>
-      this.createSlot(container, position, disc),
-    );
+    // The flash lies under the wedges, so it never washes out a segment that is
+    // placed into the ring while it still flashes.
     const flash = glowSprite(this.textures.ringDisc, ORIGIN, this.textures.resolution);
     flash.blendMode = 'add';
     flash.visible = false;
-    container.addChild(flash);
+    container.addChild(outline, flash);
+    const slots = Array.from({ length: SLOT_COUNT }, (_, position) =>
+      this.createSlot(container, position, disc),
+    );
     return { container, origin, slots, flash, shakeStart: null, flashStart: null };
   }
 
